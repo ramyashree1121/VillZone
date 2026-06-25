@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@theme {
+  --color-primary: #0A3D62;
+  --color-primary-light: #1B547F;
+  --color-primary-dark: #05233B;
+  --color-secondary: #27AE60;
+  --color-secondary-light: #2ECC71;
+  --color-secondary-dark: #1E8449;
+  --color-accent: #F4B400;
+  --color-accent-light: #FFC107;
+  --color-accent-dark: #D39E00;
+  --color-darkBg: #051827;
+  
+  --font-sans: 'Outfit', 'Inter', sans-serif;
+  
+  --shadow-premium: 0 10px 30px -10px rgba(10, 61, 98, 0.12);
+  --shadow-premium-hover: 0 20px 40px -15px rgba(10, 61, 98, 0.2);
+  --shadow-glass: 0 8px 32px 0 rgba(10, 61, 98, 0.08);
+}
+
+@utility glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+@utility glass-dark {
+  background: rgba(10, 61, 98, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@utility hero-gradient {
+  background: linear-gradient(135deg, rgba(10, 61, 98, 0.95) 0%, rgba(10, 61, 98, 0.8) 50%, rgba(39, 174, 96, 0.5) 100%);
+}
+
+@utility animate-fadeIn {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+  
+  body {
+    background-color: #f8fafc;
+    color: #1e293b;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(10, 61, 98, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 61, 98, 0.5);
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Fade In animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Marquee utility and keyframes */
+@utility animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Scroll progress bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(to right, #0A3D62, #27AE60, #F4B400);
+  z-index: 1000;
+  width: 0%;
+  transition: width 0.1s ease-out;
+}
