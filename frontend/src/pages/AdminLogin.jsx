@@ -22,8 +22,10 @@ export default function AdminLogin() {
     const uName = customUser || username;
     const uPass = customPass || password;
 
+
+    console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
     try {
-      const response = await fetch('${import.meta.env.VITE_API_URL}/api/admin/login', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: uName, password: uPass })
