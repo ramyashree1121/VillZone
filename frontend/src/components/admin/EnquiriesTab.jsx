@@ -9,7 +9,7 @@ export default function EnquiriesTab({ token, showSuccess }) {
 
   const fetchLeads = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/leads', {
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/leads', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -28,7 +28,7 @@ export default function EnquiriesTab({ token, showSuccess }) {
 
   const updateLeadStatus = async (id, status) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/leads/${id}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/leads/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status })
@@ -44,7 +44,7 @@ export default function EnquiriesTab({ token, showSuccess }) {
   const deleteLead = async (id) => {
     if (!window.confirm("Are you sure you want to delete this enquiry?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/leads/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/leads/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -56,8 +56,8 @@ export default function EnquiriesTab({ token, showSuccess }) {
     } catch (err) { console.error(err); }
   };
 
-  const filteredLeads = leads.filter(l => 
-    l.parentName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredLeads = leads.filter(l =>
+    l.parentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     l.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     l.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -74,9 +74,9 @@ export default function EnquiriesTab({ token, showSuccess }) {
       <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden flex flex-col h-[calc(100vh-200px)]">
         <div className="p-4 border-b border-[#E2E8F0] bg-slate-50 relative">
           <Search className="absolute left-7 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          <input 
-            type="text" 
-            placeholder="Search by name, email or subject..." 
+          <input
+            type="text"
+            placeholder="Search by name, email or subject..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full max-w-md pl-10 pr-4 py-2 border rounded-xl text-sm outline-none focus:border-primary"
@@ -91,8 +91,8 @@ export default function EnquiriesTab({ token, showSuccess }) {
           ) : (
             <div className="divide-y divide-slate-100">
               {filteredLeads.map((lead) => (
-                <div 
-                  key={lead._id} 
+                <div
+                  key={lead._id}
                   className={`p-4 flex gap-4 hover:bg-slate-50 transition-colors ${lead.status === 'New' ? 'bg-blue-50/50' : ''}`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${lead.status === 'New' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-400'}`}>
@@ -111,16 +111,16 @@ export default function EnquiriesTab({ token, showSuccess }) {
                       {lead.subject || 'Website Enquiry'}
                     </p>
                     <p className="text-xs text-slate-400 truncate">{lead.message}</p>
-                    
+
                     <div className="flex gap-2 mt-3">
-                      <button 
+                      <button
                         onClick={() => setSelectedLead(lead)}
                         className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200"
                       >
                         Read Full Message
                       </button>
                       {lead.status === 'New' && (
-                        <button 
+                        <button
                           onClick={() => updateLeadStatus(lead._id, 'Read')}
                           className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 flex items-center gap-1"
                         >
@@ -128,14 +128,14 @@ export default function EnquiriesTab({ token, showSuccess }) {
                         </button>
                       )}
                       {lead.status !== 'Archived' && (
-                        <button 
+                        <button
                           onClick={() => updateLeadStatus(lead._id, 'Archived')}
                           className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 flex items-center gap-1"
                         >
                           <Archive size={12} /> Archive
                         </button>
                       )}
-                      <button 
+                      <button
                         onClick={() => deleteLead(lead._id)}
                         className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 text-rose-500 hover:bg-rose-50 rounded-lg flex items-center gap-1 ml-auto"
                       >
@@ -186,14 +186,14 @@ export default function EnquiriesTab({ token, showSuccess }) {
             </div>
             <div className="p-6 border-t bg-slate-50 flex gap-3">
               {selectedLead.status === 'New' && (
-                <button 
+                <button
                   onClick={() => updateLeadStatus(selectedLead._id, 'Read')}
                   className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm"
                 >
                   Mark as Read
                 </button>
               )}
-              <a 
+              <a
                 href={`mailto:${selectedLead.email}?subject=Re: ${selectedLead.subject || 'Your Enquiry'}`}
                 className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-sm"
               >

@@ -19,7 +19,7 @@ export default function FacultyTab({ token, showSuccess }) {
 
   const fetchFaculty = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/faculty', {
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/faculty', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -35,7 +35,7 @@ export default function FacultyTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `http://localhost:5000/api/faculty/${editId}` : 'http://localhost:5000/api/faculty';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/faculty/${editId}` : '${import.meta.env.VITE_API_URL}/api/faculty';
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -77,7 +77,7 @@ export default function FacultyTab({ token, showSuccess }) {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this faculty member?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/faculty/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -105,14 +105,14 @@ export default function FacultyTab({ token, showSuccess }) {
     formDataUpload.append('image', file);
 
     try {
-      const res = await fetch('http://localhost:5000/api/upload', {
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formDataUpload
       });
       if (res.ok) {
         const data = await res.json();
-        setFormData({ ...formData, image: 'http://localhost:5000' + data.imageUrl });
+        setFormData({ ...formData, image: '${import.meta.env.VITE_API_URL}' + data.imageUrl });
         showSuccess('Image uploaded successfully!');
       } else {
         alert('Image upload failed');
@@ -130,7 +130,7 @@ export default function FacultyTab({ token, showSuccess }) {
           <h2 className="text-2xl font-black text-slate-800">Faculty Management</h2>
           <p className="text-slate-500 font-medium">Manage school teachers and staff</p>
         </div>
-        <button 
+        <button
           onClick={() => {
             if (isAdding) resetForm();
             else setIsAdding(true);
@@ -146,32 +146,32 @@ export default function FacultyTab({ token, showSuccess }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Name</label>
-              <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Dr. Jane Doe" />
+              <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Dr. Jane Doe" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Role/Designation</label>
-              <input required type="text" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. PGT Physics" />
+              <input required type="text" value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. PGT Physics" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Department</label>
-              <input required type="text" value={formData.dept} onChange={e => setFormData({...formData, dept: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Science, Arts, Languages" />
+              <input required type="text" value={formData.dept} onChange={e => setFormData({ ...formData, dept: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Science, Arts, Languages" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Qualification</label>
-              <input type="text" value={formData.qualification} onChange={e => setFormData({...formData, qualification: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. M.Sc., B.Ed." />
+              <input type="text" value={formData.qualification} onChange={e => setFormData({ ...formData, qualification: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. M.Sc., B.Ed." />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Experience</label>
-              <input type="text" value={formData.exp} onChange={e => setFormData({...formData, exp: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. 10 Yrs" />
+              <input type="text" value={formData.exp} onChange={e => setFormData({ ...formData, exp: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. 10 Yrs" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
-              <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="teacher@school.edu.in" />
+              <input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="teacher@school.edu.in" />
             </div>
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Image URL or Upload</label>
               <div className="flex gap-2 items-center">
-                <input type="url" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="https://..." />
+                <input type="url" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="https://..." />
                 <span className="text-slate-400 font-bold px-2">OR</span>
                 <label className="bg-primary hover:bg-primary-light text-white px-4 py-3 rounded-xl font-bold cursor-pointer transition-colors text-center whitespace-nowrap">
                   Upload Image
@@ -179,14 +179,14 @@ export default function FacultyTab({ token, showSuccess }) {
                 </label>
               </div>
               {formData.image && (
-                 <div className="mt-3">
-                   <img src={formData.image} alt="Preview" className="h-20 w-20 object-cover rounded-xl border border-slate-200" />
-                 </div>
+                <div className="mt-3">
+                  <img src={formData.image} alt="Preview" className="h-20 w-20 object-cover rounded-xl border border-slate-200" />
+                </div>
               )}
             </div>
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Management Quote / Message</label>
-              <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Optional. Only used for Management Team profiles." rows={3}></textarea>
+              <textarea value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Optional. Only used for Management Team profiles." rows={3}></textarea>
             </div>
           </div>
           <div className="flex justify-end pt-2">
@@ -222,11 +222,11 @@ export default function FacultyTab({ token, showSuccess }) {
               <div className="p-5 flex-1 flex flex-col">
                 <h4 className="font-bold text-slate-800 text-lg">{fac.name}</h4>
                 <div className="text-sm font-semibold text-slate-500 mb-4">{fac.role}</div>
-                
+
                 <div className="space-y-2 text-xs text-slate-600 mb-6 flex-1">
-                  {fac.qualification && <div className="flex items-center gap-2"><GraduationCap size={14} className="text-slate-400"/> {fac.qualification}</div>}
-                  {fac.exp && <div className="flex items-center gap-2"><Clock size={14} className="text-slate-400"/> {fac.exp}</div>}
-                  {fac.email && <div className="flex items-center gap-2"><Mail size={14} className="text-slate-400"/> {fac.email}</div>}
+                  {fac.qualification && <div className="flex items-center gap-2"><GraduationCap size={14} className="text-slate-400" /> {fac.qualification}</div>}
+                  {fac.exp && <div className="flex items-center gap-2"><Clock size={14} className="text-slate-400" /> {fac.exp}</div>}
+                  {fac.email && <div className="flex items-center gap-2"><Mail size={14} className="text-slate-400" /> {fac.email}</div>}
                 </div>
 
                 <div className="flex gap-2 justify-end border-t border-slate-100 pt-4">

@@ -64,7 +64,7 @@ export default function Gallery() {
   ];
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/gallery?status=Active')
+    fetch('${import.meta.env.VITE_API_URL}/api/gallery?status=Active')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.length > 0) {
@@ -86,16 +86,16 @@ export default function Gallery() {
 
   const getMediaUrl = (url) => {
     if (!url) return '';
-    return url.startsWith('/') ? `http://localhost:5000${url}` : url;
+    return url.startsWith('/') ? `${import.meta.env.VITE_API_URL}${url}` : url;
   };
-  
+
   const getThumbnail = (item) => {
     if (item.type === 'youtube') {
       return item.imageUrl || `https://img.youtube.com/vi/${item.videoUrl?.split('v=')[1]?.split('&')[0]}/maxresdefault.jpg`;
     }
     if (item.type === 'video' && !item.imageUrl) {
       // Fallback for MP4 if no thumb is generated
-      return 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800'; 
+      return 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800';
     }
     return getMediaUrl(item.imageUrl);
   };
@@ -152,7 +152,7 @@ export default function Gallery() {
                   />
                   {(item.type === 'video' || item.type === 'youtube') && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors pointer-events-none">
-                       <svg className="w-12 h-12 text-white opacity-90 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      <svg className="w-12 h-12 text-white opacity-90 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                     </div>
                   )}
                   {item.isFeatured && (

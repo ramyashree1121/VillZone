@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  User, Calendar, GraduationCap, Users, Phone, Mail, 
-  MapPin, CheckCircle, ArrowRight, ArrowLeft, Download, 
+import {
+  User, Calendar, GraduationCap, Users, Phone, Mail,
+  MapPin, CheckCircle, ArrowRight, ArrowLeft, Download,
   ShieldCheck, FileText, FileSpreadsheet, Search, Check, AlertCircle, Clock, BookOpen, MessageSquare, ExternalLink, Award, X
 } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
@@ -16,7 +16,7 @@ export default function Admission() {
   const [uploadProgress, setUploadProgress] = useState({});
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState({ loading: false, success: false, error: '', appNumber: '' });
-  
+
   // Tracking State
   const [trackingNum, setTrackingNum] = useState('');
   const [trackingMobile, setTrackingMobile] = useState('');
@@ -46,7 +46,7 @@ export default function Admission() {
   ];
 
   const tnDistricts = [
-    'Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli', 'Tirunelveli', 
+    'Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli', 'Tirunelveli',
     'Erode', 'Vellore', 'Ranipet', 'Kanchipuram', 'Tiruvannamalai', 'Dharmapuri'
   ];
 
@@ -239,7 +239,7 @@ export default function Admission() {
 
     setStatus({ loading: true, success: false, error: '', appNumber: '' });
     try {
-      const response = await fetch('http://localhost:5000/api/admissions', {
+      const response = await fetch('${import.meta.env.VITE_API_URL}/api/admissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -270,7 +270,7 @@ export default function Admission() {
     }
     setTrackingLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/admissions/track?applicationNumber=${trackingNum}&mobileNumber=${trackingMobile}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admissions/track?applicationNumber=${trackingNum}&mobileNumber=${trackingMobile}`);
       const data = await response.json();
       if (response.ok) {
         setTrackedApplication(data);
@@ -286,11 +286,11 @@ export default function Admission() {
 
   return (
     <div className="pt-0 bg-[#F8FAFC] text-[#0F172A] min-h-screen font-sans">
-      
+
       {/* HERO SECTION */}
       <section className="relative py-10 bg-gradient-to-b from-[#EBF3FC] to-[#F8FAFC] overflow-hidden border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
+
           <div className="space-y-6 text-left">
             <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-primary/10 text-primary border border-primary/20">
               ⚡ Admissions Open 2026-27
@@ -303,7 +303,7 @@ export default function Admission() {
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">
-              <button 
+              <button
                 onClick={() => {
                   setActiveMode('apply');
                   navigate('/admissions');
@@ -313,13 +313,13 @@ export default function Admission() {
               >
                 Apply Online
               </button>
-              <button 
+              <button
                 onClick={() => window.open('/document/prospectus', '_blank')}
                 className="px-8 py-3.5 border border-[#E2E8F0] hover:bg-slate-50 text-primary font-extrabold rounded-2xl hover:scale-105 active:scale-95 transition-all text-xs uppercase tracking-wider cursor-pointer bg-white"
               >
                 Download Prospectus
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setActiveMode('track');
                   navigate('/track-application');
@@ -366,8 +366,8 @@ export default function Admission() {
             <form onSubmit={handleTrackApplication} className="space-y-4 font-semibold text-xs text-slate-700">
               <div>
                 <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Application Number</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={trackingNum}
                   onChange={(e) => setTrackingNum(e.target.value)}
                   placeholder="e.g. VHIS-2026-000001"
@@ -376,16 +376,16 @@ export default function Admission() {
               </div>
               <div>
                 <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Mobile Number</label>
-                <input 
-                  type="tel" 
+                <input
+                  type="tel"
                   value={trackingMobile}
                   onChange={(e) => setTrackingMobile(e.target.value)}
                   placeholder="Registered father/mother mobile"
                   className="w-full px-4 py-3 border border-[#E2E8F0] rounded-xl outline-none bg-slate-50 focus:bg-white focus:border-primary transition-colors"
                 />
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={trackingLoading}
                 className="w-full py-3 bg-[#1E88E5] hover:bg-[#1976D2] text-white font-extrabold rounded-xl uppercase tracking-wider cursor-pointer shadow transition-all flex items-center justify-center gap-1"
               >
@@ -429,7 +429,7 @@ export default function Admission() {
       {activeMode === 'apply' && (
         <section id="form-section" className="py-10 max-w-3xl mx-auto px-6">
           <div className="bg-white border border-[#E2E8F0] rounded-3xl p-6 sm:p-10 shadow-premium">
-            
+
             {status.success ? (
               <div className="text-center p-8 space-y-6 flex flex-col items-center">
                 <div className="w-16 h-16 bg-[#22C55E]/10 text-[#22C55E] rounded-full flex items-center justify-center">
@@ -445,13 +445,13 @@ export default function Admission() {
                 </p>
                 <div className="flex gap-3">
                   <button onClick={() => window.print()} className="px-5 py-2.5 bg-slate-900 text-white font-extrabold text-xs rounded-xl uppercase tracking-wider">Print PDF</button>
-                  <button 
+                  <button
                     onClick={() => {
                       setTrackingNum(status.appNumber);
                       setTrackingMobile(formData.fatherMobile);
                       setActiveMode('track');
                       setStatus({ loading: false, success: false, error: '', appNumber: '' });
-                    }} 
+                    }}
                     className="px-5 py-2.5 border rounded-xl font-extrabold text-xs uppercase tracking-wider text-primary"
                   >
                     Track Status
@@ -479,19 +479,17 @@ export default function Admission() {
                             type="button"
                             onClick={() => stepNum < step && setStep(stepNum)}
                             disabled={stepNum >= step}
-                            className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
-                              isActive 
-                                ? 'bg-primary text-white ring-4 ring-primary/20 shadow-md' 
-                                : isCompleted 
-                                  ? 'bg-secondary text-white' 
+                            className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${isActive
+                                ? 'bg-primary text-white ring-4 ring-primary/20 shadow-md'
+                                : isCompleted
+                                  ? 'bg-secondary text-white'
                                   : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                            }`}
+                              }`}
                           >
                             {isCompleted ? <Check size={14} /> : stepNum}
                           </button>
-                          <span className={`text-[10px] font-bold mt-2 tracking-wider ${
-                            isActive ? 'text-primary' : isCompleted ? 'text-secondary' : 'text-slate-400'
-                          }`}>
+                          <span className={`text-[10px] font-bold mt-2 tracking-wider ${isActive ? 'text-primary' : isCompleted ? 'text-secondary' : 'text-slate-400'
+                            }`}>
                             {val}
                           </span>
                         </div>
@@ -512,7 +510,7 @@ export default function Admission() {
                 )}
 
                 <form ref={formRef} onSubmit={(e) => e.preventDefault()} className="space-y-6 text-xs font-semibold text-slate-700">
-                  
+
                   {/* STEP 1 */}
                   {step === 1 && (
                     <div className="space-y-4">
@@ -520,8 +518,8 @@ export default function Admission() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Student Full Name *</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             name="studentName"
                             required
                             value={formData.studentName}
@@ -533,8 +531,8 @@ export default function Admission() {
                         </div>
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Date of Birth *</label>
-                          <input 
-                            type="date" 
+                          <input
+                            type="date"
                             name="dateOfBirth"
                             required
                             value={formData.dateOfBirth}
@@ -548,7 +546,7 @@ export default function Admission() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Gender *</label>
-                          <select 
+                          <select
                             name="gender"
                             value={formData.gender}
                             onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
@@ -563,7 +561,7 @@ export default function Admission() {
                         </div>
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Applying Grade *</label>
-                          <select 
+                          <select
                             name="classApplyingFor"
                             value={formData.classApplyingFor}
                             onChange={(e) => setFormData({ ...formData, classApplyingFor: e.target.value })}
@@ -578,8 +576,8 @@ export default function Admission() {
                       </div>
                       <div>
                         <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Aadhaar Number</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           name="aadhaarNumber"
                           value={formData.aadhaarNumber}
                           onChange={(e) => setFormData({ ...formData, aadhaarNumber: e.target.value })}
@@ -597,8 +595,8 @@ export default function Admission() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Father's Name *</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             name="fatherName"
                             required
                             value={formData.fatherName}
@@ -610,8 +608,8 @@ export default function Admission() {
                         </div>
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Mother's Name *</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             name="motherName"
                             required
                             value={formData.motherName}
@@ -626,8 +624,8 @@ export default function Admission() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Father Mobile *</label>
-                          <input 
-                            type="tel" 
+                          <input
+                            type="tel"
                             name="fatherMobile"
                             required
                             value={formData.fatherMobile}
@@ -639,8 +637,8 @@ export default function Admission() {
                         </div>
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Father Email *</label>
-                          <input 
-                            type="email" 
+                          <input
+                            type="email"
                             name="fatherEmail"
                             required
                             value={formData.fatherEmail}
@@ -660,8 +658,8 @@ export default function Admission() {
                       <h3 className="text-sm font-black text-[#0F4C81] uppercase tracking-wider border-b pb-1">3. Address details</h3>
                       <div>
                         <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Address Line 1 *</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           name="addressLine1"
                           required
                           value={formData.addressLine1}
@@ -674,8 +672,8 @@ export default function Admission() {
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">City *</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             name="city"
                             required
                             value={formData.city}
@@ -687,7 +685,7 @@ export default function Admission() {
                         </div>
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">District *</label>
-                          <select 
+                          <select
                             name="district"
                             value={formData.district}
                             onChange={(e) => setFormData({ ...formData, district: e.target.value })}
@@ -707,8 +705,8 @@ export default function Admission() {
                         </div>
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Pincode *</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             name="pincode"
                             required
                             value={formData.pincode}
@@ -727,19 +725,19 @@ export default function Admission() {
                       <h3 className="text-sm font-black text-[#0F4C81] uppercase tracking-wider border-b pb-1">4. Academic Details</h3>
                       <div>
                         <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Previous School Name</label>
-                        <input 
-                           type="text" 
-                           name="previousSchool"
-                           value={formData.previousSchool}
-                           onChange={(e) => setFormData({ ...formData, previousSchool: e.target.value })}
-                           onKeyDown={handleKeyDown}
-                           className="w-full px-3 py-2.5 border border-slate-200 rounded-xl outline-none bg-slate-50"
+                        <input
+                          type="text"
+                          name="previousSchool"
+                          value={formData.previousSchool}
+                          onChange={(e) => setFormData({ ...formData, previousSchool: e.target.value })}
+                          onKeyDown={handleKeyDown}
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl outline-none bg-slate-50"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Board *</label>
-                          <select 
+                          <select
                             name="previousBoard"
                             value={formData.previousBoard}
                             onChange={(e) => setFormData({ ...formData, previousBoard: e.target.value })}
@@ -757,8 +755,8 @@ export default function Admission() {
                         </div>
                         <div>
                           <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Last Grade</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             name="previousGrade"
                             value={formData.previousGrade}
                             onChange={(e) => setFormData({ ...formData, previousGrade: e.target.value })}
@@ -782,8 +780,8 @@ export default function Admission() {
                         ].map((doc) => (
                           <div key={doc.key} className="bg-slate-50 p-4 border rounded-2xl flex flex-col justify-between">
                             <span className="block font-bold text-xs text-slate-800 mb-1">{doc.label}</span>
-                            <input 
-                              type="file" 
+                            <input
+                              type="file"
                               onChange={(e) => handleFileChange(e, doc.key)}
                               className="text-[10px] mt-2 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-[#0F4C81]/15 file:text-[#0F4C81] cursor-pointer"
                             />
@@ -853,13 +851,13 @@ export default function Admission() {
       {/* CONTACT & COMMUNICATION SECTION */}
       <section className="py-10 bg-white border-t border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
-          
+
           <div className="space-y-6">
             <h3 className="text-2xl font-extrabold text-[#0F172A]">Admission Communication Hub</h3>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Reach out to our desk for counseling tours and queries</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <a 
-                href="tel:+919876543210" 
+              <a
+                href="tel:+919876543210"
                 className="p-5 border border-[#E2E8F0] hover:border-[#1E88E5] rounded-3xl flex items-center gap-4 transition-all hover:bg-slate-50 cursor-pointer"
               >
                 <div className="p-3 bg-[#0F4C81]/5 text-[#0F4C81] rounded-2xl"><Phone size={20} /></div>
@@ -869,9 +867,9 @@ export default function Admission() {
                 </div>
               </a>
 
-              <a 
-                href="https://wa.me/919876543210?text=Hello,%20I%20would%2520like%20to%20know%20more%20about%20admissions%20at%20VillZone%20International%20School." 
-                target="_blank" 
+              <a
+                href="https://wa.me/919876543210?text=Hello,%20I%20would%2520like%20to%20know%20more%20about%20admissions%20at%20VillZone%20International%20School."
+                target="_blank"
                 rel="noopener noreferrer"
                 className="p-5 border border-[#E2E8F0] hover:border-[#22C55E] rounded-3xl flex items-center gap-4 transition-all hover:bg-slate-50 cursor-pointer"
               >
@@ -882,8 +880,8 @@ export default function Admission() {
                 </div>
               </a>
 
-              <a 
-                href="mailto:admissions@villzone.edu.in" 
+              <a
+                href="mailto:admissions@villzone.edu.in"
                 className="p-5 border border-[#E2E8F0] hover:border-[#1E88E5] rounded-3xl flex items-center gap-4 transition-all hover:bg-slate-50 cursor-pointer"
               >
                 <div className="p-3 bg-[#0F4C81]/5 text-[#0F4C81] rounded-2xl"><Mail size={20} /></div>
@@ -893,9 +891,9 @@ export default function Admission() {
                 </div>
               </a>
 
-              <a 
-                href="https://maps.google.com/?q=VillZone+International+School" 
-                target="_blank" 
+              <a
+                href="https://maps.google.com/?q=VillZone+International+School"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="p-5 border border-[#E2E8F0] hover:border-[#1E88E5] rounded-3xl flex items-center gap-4 transition-all hover:bg-slate-50 cursor-pointer"
               >

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, Trash2, Image as ImageIcon, Edit2, PlayCircle, Video, Search, 
+import {
+  Plus, Trash2, Image as ImageIcon, Edit2, PlayCircle, Video, Search,
   Filter, CheckSquare, Square, Eye, EyeOff, LayoutGrid, CheckCircle2,
   HardDrive, FileImage, Film
 } from 'lucide-react';
@@ -9,14 +9,14 @@ export default function GalleryTab({ token, showSuccess }) {
   const [gallery, setGallery] = useState([]);
   const [stats, setStats] = useState({ totalMedia: 0, totalImages: 0, totalVideos: 0, featuredMedia: 0, storageUsage: 0 });
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Modals & Forms
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  
+
   const [formData, setFormData] = useState({
-    title: '', description: '', category: 'Campus', type: 'image', 
+    title: '', description: '', category: 'Campus', type: 'image',
     status: 'Active', isFeatured: false, seoTitle: '', metaDescription: '', altText: '', videoUrl: ''
   });
   const [mediaFile, setMediaFile] = useState(null);
@@ -36,7 +36,7 @@ export default function GalleryTab({ token, showSuccess }) {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/gallery/stats', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/gallery/stats', { headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) setStats(await res.json());
     } catch (err) { console.error(err); }
   };
@@ -44,7 +44,7 @@ export default function GalleryTab({ token, showSuccess }) {
   const fetchGallery = async () => {
     try {
       const query = new URLSearchParams({ search, category: filterCategory, type: filterType, status: filterStatus });
-      const res = await fetch(`http://localhost:5000/api/gallery?${query.toString()}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery?${query.toString()}`);
       if (res.ok) {
         setGallery(await res.json());
         setSelectedIds([]); // Clear selections on refetch
@@ -60,7 +60,7 @@ export default function GalleryTab({ token, showSuccess }) {
     setIsEditing(false);
     setEditId(null);
     setFormData({
-      title: '', description: '', category: 'Campus', type: 'image', 
+      title: '', description: '', category: 'Campus', type: 'image',
       status: 'Active', isFeatured: false, seoTitle: '', metaDescription: '', altText: '', videoUrl: ''
     });
     setMediaFile(null);
@@ -99,9 +99,9 @@ export default function GalleryTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `http://localhost:5000/api/gallery/${editId}` : 'http://localhost:5000/api/gallery';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/gallery/${editId}` : '${import.meta.env.VITE_API_URL}/api/gallery';
       const method = isEditing ? 'PUT' : 'POST';
-      
+
       const payload = new FormData();
       Object.keys(formData).forEach(key => payload.append(key, formData[key]));
       if (mediaFile) payload.append('mediaFile', mediaFile);
@@ -129,7 +129,7 @@ export default function GalleryTab({ token, showSuccess }) {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to permanently delete this media?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/gallery/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -146,7 +146,7 @@ export default function GalleryTab({ token, showSuccess }) {
     if (action === 'delete' && !window.confirm(`Permanently delete ${selectedIds.length} items?`)) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/gallery/bulk', {
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/gallery/bulk', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ids: selectedIds, action, value })
@@ -168,7 +168,7 @@ export default function GalleryTab({ token, showSuccess }) {
 
   return (
     <div className="p-6 space-y-6">
-      
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -206,7 +206,7 @@ export default function GalleryTab({ token, showSuccess }) {
 
       {/* Filters & Bulk Actions Toolbar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
-        
+
         {/* Bulk Actions (Left) */}
         <div className="flex items-center gap-3">
           {selectedIds.length > 0 ? (
@@ -215,7 +215,7 @@ export default function GalleryTab({ token, showSuccess }) {
               <button onClick={() => handleBulkAction('delete')} className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg tooltip" title="Delete Selected"><Trash2 size={18} /></button>
               <button onClick={() => handleBulkAction('hide')} className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg tooltip" title="Hide Selected"><EyeOff size={18} /></button>
               <button onClick={() => handleBulkAction('show')} className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg tooltip" title="Show Selected"><Eye size={18} /></button>
-              <select onChange={(e) => {if(e.target.value) handleBulkAction('category', e.target.value); e.target.value='';}} className="text-sm bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 outline-none">
+              <select onChange={(e) => { if (e.target.value) handleBulkAction('category', e.target.value); e.target.value = ''; }} className="text-sm bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 outline-none">
                 <option value="">Move Category...</option>
                 <option value="Campus">Campus</option>
                 <option value="Sports">Sports</option>
@@ -300,11 +300,11 @@ export default function GalleryTab({ token, showSuccess }) {
                       <td className="p-4">
                         <div className="w-20 h-14 rounded-lg overflow-hidden bg-slate-100 relative border border-slate-200 flex-shrink-0">
                           {item.type === 'youtube' ? (
-                            <img src={item.imageUrl || `https://img.youtube.com/vi/${item.videoUrl?.split('v=')[1]?.split('&')[0]}/default.jpg`} alt="YT Thumb" className="w-full h-full object-cover" onError={(e)=>e.target.src='https://via.placeholder.com/80x56?text=YT'} />
+                            <img src={item.imageUrl || `https://img.youtube.com/vi/${item.videoUrl?.split('v=')[1]?.split('&')[0]}/default.jpg`} alt="YT Thumb" className="w-full h-full object-cover" onError={(e) => e.target.src = 'https://via.placeholder.com/80x56?text=YT'} />
                           ) : item.type === 'video' ? (
                             <div className="w-full h-full flex items-center justify-center bg-slate-800 text-white"><PlayCircle size={20} /></div>
                           ) : (
-                            <img src={item.imageUrl?.startsWith('/') ? `http://localhost:5000${item.imageUrl}` : item.imageUrl} alt="Thumbnail" className="w-full h-full object-cover" onError={(e)=>e.target.src='https://via.placeholder.com/80x56'} />
+                            <img src={item.imageUrl?.startsWith('/') ? `${import.meta.env.VITE_API_URL}${item.imageUrl}` : item.imageUrl} alt="Thumbnail" className="w-full h-full object-cover" onError={(e) => e.target.src = 'https://via.placeholder.com/80x56'} />
                           )}
                           {item.isFeatured && <div className="absolute top-0 right-0 bg-amber-400 text-white p-0.5 rounded-bl-lg"><CheckCircle2 size={10} /></div>}
                         </div>
@@ -315,9 +315,9 @@ export default function GalleryTab({ token, showSuccess }) {
                       </td>
                       <td className="p-4">
                         <span className="flex items-center gap-1 text-xs font-bold text-slate-600">
-                          {item.type === 'image' && <ImageIcon size={14} className="text-emerald-500"/>}
-                          {item.type === 'video' && <Video size={14} className="text-purple-500"/>}
-                          {item.type === 'youtube' && <Film size={14} className="text-red-500"/>}
+                          {item.type === 'image' && <ImageIcon size={14} className="text-emerald-500" />}
+                          {item.type === 'video' && <Video size={14} className="text-purple-500" />}
+                          {item.type === 'youtube' && <Film size={14} className="text-red-500" />}
                           {item.type?.toUpperCase()}
                         </span>
                       </td>
@@ -355,25 +355,25 @@ export default function GalleryTab({ token, showSuccess }) {
               <h3 className="text-lg font-black text-slate-800">{isEditing ? 'Edit Media Details' : 'Add New Media'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">&times; Close</button>
             </div>
-            
+
             <div className="p-6 overflow-y-auto flex-1">
               <form id="mediaForm" onSubmit={handleSubmit} className="space-y-6">
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Left Col: Basic Info */}
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Title *</label>
-                      <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
+                      <input required type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label>
-                      <textarea rows="3" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
+                      <textarea rows="3" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Category</label>
-                        <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary">
+                        <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary">
                           <option value="Campus">Campus</option>
                           <option value="Sports">Sports</option>
                           <option value="Science">Science</option>
@@ -385,7 +385,7 @@ export default function GalleryTab({ token, showSuccess }) {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Status</label>
-                        <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary">
+                        <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary">
                           <option value="Active">Active</option>
                           <option value="Hidden">Hidden</option>
                         </select>
@@ -397,7 +397,7 @@ export default function GalleryTab({ token, showSuccess }) {
                   <div className="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                     <div>
                       <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Media Type</label>
-                      <select value={formData.type} onChange={e => { setFormData({...formData, type: e.target.value}); setMediaFile(null); setPreviewUrl(''); }} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary">
+                      <select value={formData.type} onChange={e => { setFormData({ ...formData, type: e.target.value }); setMediaFile(null); setPreviewUrl(''); }} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary">
                         <option value="image">Image Upload (JPG, PNG, WEBP)</option>
                         <option value="video">Video Upload (MP4)</option>
                         <option value="youtube">YouTube Link Embed</option>
@@ -407,20 +407,20 @@ export default function GalleryTab({ token, showSuccess }) {
                     {formData.type === 'youtube' ? (
                       <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">YouTube URL</label>
-                        <input type="url" placeholder="https://youtube.com/watch?v=..." value={formData.videoUrl} onChange={e => setFormData({...formData, videoUrl: e.target.value})} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
+                        <input type="url" placeholder="https://youtube.com/watch?v=..." value={formData.videoUrl} onChange={e => setFormData({ ...formData, videoUrl: e.target.value })} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1 mt-3">Custom Thumbnail URL (Optional)</label>
-                        <input type="url" placeholder="If empty, YouTube default used" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
+                        <input type="url" placeholder="If empty, YouTube default used" value={formData.imageUrl} onChange={e => setFormData({ ...formData, imageUrl: e.target.value })} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary" />
                       </div>
                     ) : (
                       <div>
-                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">File Upload (Max 50MB)</label>
-                         <input type="file" accept={formData.type === 'image' ? 'image/jpeg, image/png, image/webp' : 'video/mp4'} onChange={handleFileChange} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-light" />
-                         {previewUrl && formData.type === 'image' && (
-                           <img src={previewUrl.startsWith('/') ? `http://localhost:5000${previewUrl}` : previewUrl} alt="Preview" className="mt-3 h-24 object-cover rounded-xl border border-slate-200" />
-                         )}
-                         {previewUrl && formData.type === 'video' && (
-                           <video src={previewUrl.startsWith('/') ? `http://localhost:5000${previewUrl}` : previewUrl} className="mt-3 h-24 rounded-xl border border-slate-200" controls />
-                         )}
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">File Upload (Max 50MB)</label>
+                        <input type="file" accept={formData.type === 'image' ? 'image/jpeg, image/png, image/webp' : 'video/mp4'} onChange={handleFileChange} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-light" />
+                        {previewUrl && formData.type === 'image' && (
+                          <img src={previewUrl.startsWith('/') ? `${import.meta.env.VITE_API_URL}${previewUrl}` : previewUrl} alt="Preview" className="mt-3 h-24 object-cover rounded-xl border border-slate-200" />
+                        )}
+                        {previewUrl && formData.type === 'video' && (
+                          <video src={previewUrl.startsWith('/') ? `${import.meta.env.VITE_API_URL}${previewUrl}` : previewUrl} className="mt-3 h-24 rounded-xl border border-slate-200" controls />
+                        )}
                       </div>
                     )}
                   </div>
@@ -428,25 +428,25 @@ export default function GalleryTab({ token, showSuccess }) {
 
                 {/* Advanced Section: SEO & Featured */}
                 <div className="pt-4 border-t border-slate-100">
-                  <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2"><Filter size={16}/> Advanced Settings (SEO & Placement)</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2"><Filter size={16} /> Advanced Settings (SEO & Placement)</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                     <div>
+                    <div>
                       <label className="block text-xs font-bold text-slate-500 uppercase mb-1">SEO Title</label>
-                      <input type="text" value={formData.seoTitle} onChange={e => setFormData({...formData, seoTitle: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-primary text-sm" />
+                      <input type="text" value={formData.seoTitle} onChange={e => setFormData({ ...formData, seoTitle: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-primary text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Alt Text</label>
-                      <input type="text" value={formData.altText} onChange={e => setFormData({...formData, altText: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-primary text-sm" />
+                      <input type="text" value={formData.altText} onChange={e => setFormData({ ...formData, altText: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-primary text-sm" />
                     </div>
                     <div className="flex items-end pb-2">
-                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" checked={formData.isFeatured} onChange={e => setFormData({...formData, isFeatured: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" />
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={formData.isFeatured} onChange={e => setFormData({ ...formData, isFeatured: e.target.checked })} className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" />
                         <span className="text-sm font-bold text-slate-700">Mark as Featured</span>
                       </label>
                     </div>
                     <div className="md:col-span-3">
                       <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Meta Description</label>
-                      <input type="text" value={formData.metaDescription} onChange={e => setFormData({...formData, metaDescription: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-primary text-sm" />
+                      <input type="text" value={formData.metaDescription} onChange={e => setFormData({ ...formData, metaDescription: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-primary text-sm" />
                     </div>
                   </div>
                 </div>

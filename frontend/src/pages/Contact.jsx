@@ -17,7 +17,7 @@ export default function Contact() {
   const [socialLinks, setSocialLinks] = useState({ facebookUrl: '', instagramUrl: '', youtubeUrl: '' });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/settings')
+    fetch('${import.meta.env.VITE_API_URL}/api/settings')
       .then(res => res.json())
       .then(data => {
         if (data) setSocialLinks(data);
@@ -60,7 +60,7 @@ export default function Contact() {
 
     setStatus({ loading: true, success: false, error: '' });
     try {
-      const response = await fetch('http://localhost:5000/api/inquiries', {
+      const response = await fetch('${import.meta.env.VITE_API_URL}/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

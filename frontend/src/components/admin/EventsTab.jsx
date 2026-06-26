@@ -17,7 +17,7 @@ export default function EventsTab({ token, showSuccess }) {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/events', {
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/events', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -33,7 +33,7 @@ export default function EventsTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `http://localhost:5000/api/events/${editId}` : 'http://localhost:5000/api/events';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/events/${editId}` : '${import.meta.env.VITE_API_URL}/api/events';
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -64,7 +64,7 @@ export default function EventsTab({ token, showSuccess }) {
       const pad = (n) => n.toString().padStart(2, '0');
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
     };
-    
+
     setFormData({
       title: event.title,
       description: event.description || '',
@@ -82,7 +82,7 @@ export default function EventsTab({ token, showSuccess }) {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this event?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/events/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/events/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -102,7 +102,7 @@ export default function EventsTab({ token, showSuccess }) {
           <h2 className="text-2xl font-black text-slate-800">Events</h2>
           <p className="text-slate-500 font-medium">Manage school calendar and upcoming events</p>
         </div>
-        <button 
+        <button
           onClick={() => {
             if (isAdding) {
               setIsAdding(false);
@@ -124,11 +124,11 @@ export default function EventsTab({ token, showSuccess }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Event Title</label>
-              <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Annual Sports Day" />
+              <input required type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Annual Sports Day" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Event Type</label>
-              <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+              <select value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
                 <option>Event</option>
                 <option>Holiday</option>
                 <option>Exam</option>
@@ -137,19 +137,19 @@ export default function EventsTab({ token, showSuccess }) {
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Start Date & Time</label>
-              <input required type="datetime-local" value={formData.start} onChange={e => setFormData({...formData, start: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+              <input required type="datetime-local" value={formData.start} onChange={e => setFormData({ ...formData, start: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">End Date & Time (Optional)</label>
-              <input type="datetime-local" value={formData.end} onChange={e => setFormData({...formData, end: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+              <input type="datetime-local" value={formData.end} onChange={e => setFormData({ ...formData, end: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             </div>
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Venue (Optional)</label>
-              <input type="text" value={formData.venue} onChange={e => setFormData({...formData, venue: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Main Auditorium" />
+              <input type="text" value={formData.venue} onChange={e => setFormData({ ...formData, venue: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Main Auditorium" />
             </div>
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Description (Optional)</label>
-              <textarea rows="3" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Event details..."></textarea>
+              <textarea rows="3" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Event details..."></textarea>
             </div>
           </div>
           <div className="flex justify-end">

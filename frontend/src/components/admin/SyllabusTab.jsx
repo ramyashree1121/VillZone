@@ -7,7 +7,7 @@ export default function SyllabusTab({ token, showSuccess }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     title: '', gradeLevel: 'Pre-KG', status: 'Published'
   });
@@ -19,7 +19,7 @@ export default function SyllabusTab({ token, showSuccess }) {
 
   const fetchSyllabi = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/syllabus', {
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/syllabus', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -35,7 +35,7 @@ export default function SyllabusTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `http://localhost:5000/api/syllabus/${editId}` : 'http://localhost:5000/api/syllabus';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/syllabus/${editId}` : '${import.meta.env.VITE_API_URL}/api/syllabus';
       const method = isEditing ? 'PUT' : 'POST';
 
       const data = new FormData();
@@ -53,7 +53,7 @@ export default function SyllabusTab({ token, showSuccess }) {
         },
         body: data
       });
-      
+
       if (res.ok) {
         showSuccess(isEditing ? 'Syllabus updated successfully!' : 'Syllabus added successfully!');
         resetForm();
@@ -86,7 +86,7 @@ export default function SyllabusTab({ token, showSuccess }) {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this syllabus?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/syllabus/${id}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/syllabus/${id}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -119,7 +119,7 @@ export default function SyllabusTab({ token, showSuccess }) {
           <h2 className="text-xl font-bold text-slate-800">Academic Syllabus</h2>
           <p className="text-sm text-slate-500">Manage grade-wise syllabus documents</p>
         </div>
-        <button 
+        <button
           onClick={() => { resetForm(); setIsAdding(true); }}
           className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-sm font-medium transition"
         >
@@ -131,17 +131,17 @@ export default function SyllabusTab({ token, showSuccess }) {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-slate-800">{isEditing ? 'Edit Syllabus' : 'Add New Syllabus'}</h3>
-            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
+            <button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Title</label>
-                <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g. CBSE Grade 10 Syllabus 2026-27" />
+                <input required type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="e.g. CBSE Grade 10 Syllabus 2026-27" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Grade Level</label>
-                <select value={formData.gradeLevel} onChange={e => setFormData({...formData, gradeLevel: e.target.value})} className="w-full p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                <select value={formData.gradeLevel} onChange={e => setFormData({ ...formData, gradeLevel: e.target.value })} className="w-full p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none">
                   <option>Pre-KG</option>
                   <option>LKG</option>
                   <option>UKG</option>
@@ -152,7 +152,7 @@ export default function SyllabusTab({ token, showSuccess }) {
                 </select>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Upload PDF File {isEditing && '(Leave empty to keep existing)'}</label>
@@ -160,7 +160,7 @@ export default function SyllabusTab({ token, showSuccess }) {
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} className="w-full p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none">
                   <option>Published</option>
                   <option>Draft</option>
                 </select>
@@ -210,7 +210,7 @@ export default function SyllabusTab({ token, showSuccess }) {
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
-                      <a href={`http://localhost:5000${item.pdfUrl}`} target="_blank" rel="noreferrer" className="text-primary hover:underline text-xs flex items-center gap-1">
+                      <a href={`${import.meta.env.VITE_API_URL}${item.pdfUrl}`} target="_blank" rel="noreferrer" className="text-primary hover:underline text-xs flex items-center gap-1">
                         <Download size={14} /> Download PDF
                       </a>
                       <span className="text-xs text-slate-400">({formatSize(item.fileSize)})</span>

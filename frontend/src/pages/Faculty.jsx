@@ -9,7 +9,7 @@ export default function Faculty() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/faculty')
+    fetch('${import.meta.env.VITE_API_URL}/api/faculty')
       .then(res => res.json())
       .then(data => {
         setFacultyList(data);

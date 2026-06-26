@@ -14,7 +14,7 @@ export default function Calendar() {
   ];
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/events')
+    fetch('${import.meta.env.VITE_API_URL}/api/events')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.length > 0) {
@@ -34,7 +34,7 @@ export default function Calendar() {
 
   return (
     <div className="pt-0 bg-slate-50 min-h-screen">
-      
+
       {/* Banner */}
       <section className="bg-primary text-white py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=1000')" }} />
@@ -47,18 +47,17 @@ export default function Calendar() {
       {/* Filter and Events List */}
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          
+
           {/* Filters */}
           <div className="flex flex-wrap justify-center gap-2 mb-10">
             {eventTypes.map((type) => (
               <button
                 key={type}
                 onClick={() => setActiveFilter(type)}
-                className={`px-4.5 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${
-                  activeFilter === type
+                className={`px-4.5 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${activeFilter === type
                     ? 'bg-primary text-white'
                     : 'bg-white text-slate-600 hover:bg-slate-100'
-                }`}
+                  }`}
               >
                 {type}
               </button>
@@ -70,7 +69,7 @@ export default function Calendar() {
             {filteredEvents.length > 0 ? (
               filteredEvents.map((ev, idx) => (
                 <AnimatedSection key={idx} delay={idx * 0.05} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-premium flex flex-col sm:flex-row gap-6 items-start justify-between">
-                  
+
                   <div className="flex gap-4">
                     {/* Event Color tag */}
                     <div className="w-3 h-16 rounded-full shrink-0" style={{ backgroundColor: ev.color || '#0A3D62' }} />

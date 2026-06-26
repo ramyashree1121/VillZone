@@ -7,8 +7,8 @@ export default function Syllabus() {
 
   useEffect(() => {
     document.title = "Academic Syllabus | Villzone School | Pre-KG to Grade 12";
-    
-    fetch('http://localhost:5000/api/syllabus')
+
+    fetch('${import.meta.env.VITE_API_URL}/api/syllabus')
       .then(res => res.json())
       .then(data => setSyllabusDocs(data.filter(s => s.status === 'Published')))
       .catch(err => console.error(err));
@@ -120,7 +120,7 @@ export default function Syllabus() {
             <h2 className="text-3xl font-black text-[#0A1128] mb-4">About Our Curriculum</h2>
             <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((stat, idx) => (
               <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
@@ -139,18 +139,17 @@ export default function Syllabus() {
       <section className="py-20 bg-white">
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-black text-[#0A1128] text-center mb-10">Class-wise Core Focus</h2>
-          
+
           {/* Tabs */}
           <div className="flex flex-wrap justify-center gap-3 mb-10">
             {tabs.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${
-                  activeTab === tab 
-                    ? 'bg-[#10B981] text-white shadow-md shadow-emerald-500/20' 
+                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeTab === tab
+                    ? 'bg-[#10B981] text-white shadow-md shadow-emerald-500/20'
                     : 'bg-[#F3F4F6] text-[#374151] hover:bg-slate-200'
-                }`}
+                  }`}
               >
                 {tab}
               </button>
@@ -162,11 +161,11 @@ export default function Syllabus() {
             <span className="inline-block px-4 py-1.5 bg-[#E2E8F0] text-[#1E293B] text-xs font-black rounded-full mb-6 tracking-wider">
               {curriculumData[activeTab].tags}
             </span>
-            
+
             <h3 className="text-2xl md:text-3xl font-black text-[#0F172A] mb-3">
               {curriculumData[activeTab].title}
             </h3>
-            
+
             <p className="text-[#475569] text-base mb-10">
               {curriculumData[activeTab].description}
             </p>
@@ -193,7 +192,7 @@ export default function Syllabus() {
             <h2 className="text-3xl font-black text-[#0A1128] mb-4">Teaching Methodology</h2>
             <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {methodologies.map((method, idx) => (
               <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3 hover:-translate-y-1 transition-transform">
@@ -236,12 +235,12 @@ export default function Syllabus() {
                   </div>
                   <h3 className="text-lg font-black text-slate-800 mb-2">{doc.title}</h3>
                   <p className="text-xs text-slate-500 font-medium mb-6">Updated: {new Date(doc.updatedAt || doc.createdAt).toLocaleDateString()}</p>
-                  
+
                   <div className="mt-auto flex gap-3">
-                    <a href={`http://localhost:5000${doc.pdfUrl}`} target="_blank" rel="noreferrer" className="flex-1 bg-[#0A1128] hover:bg-primary text-white text-center py-2.5 rounded-xl text-sm font-bold transition-colors">
+                    <a href={`${import.meta.env.VITE_API_URL}${doc.pdfUrl}`} target="_blank" rel="noreferrer" className="flex-1 bg-[#0A1128] hover:bg-primary text-white text-center py-2.5 rounded-xl text-sm font-bold transition-colors">
                       View
                     </a>
-                    <a href={`http://localhost:5000${doc.pdfUrl}`} download className="flex-1 bg-blue-50 hover:bg-blue-100 text-primary text-center py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                    <a href={`${import.meta.env.VITE_API_URL}${doc.pdfUrl}`} download className="flex-1 bg-blue-50 hover:bg-blue-100 text-primary text-center py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
                       <Download size={16} /> Download
                     </a>
                   </div>

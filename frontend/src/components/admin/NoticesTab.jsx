@@ -17,7 +17,7 @@ export default function NoticesTab({ token, showSuccess }) {
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/notices', {
+      const res = await fetch('${import.meta.env.VITE_API_URL}/api/notices', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -33,7 +33,7 @@ export default function NoticesTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `http://localhost:5000/api/notices/${editId}` : 'http://localhost:5000/api/notices';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/notices/${editId}` : '${import.meta.env.VITE_API_URL}/api/notices';
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -73,7 +73,7 @@ export default function NoticesTab({ token, showSuccess }) {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this notice?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/notices/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/notices/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -93,7 +93,7 @@ export default function NoticesTab({ token, showSuccess }) {
           <h2 className="text-2xl font-black text-slate-800">News & Alerts</h2>
           <p className="text-slate-500 font-medium">Manage school announcements and notices</p>
         </div>
-        <button 
+        <button
           onClick={() => {
             if (isAdding) {
               setIsAdding(false);
@@ -115,11 +115,11 @@ export default function NoticesTab({ token, showSuccess }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Title</label>
-              <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Term Exams Postponed" />
+              <input required type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="e.g. Term Exams Postponed" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Category</label>
-              <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+              <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
                 <option>General</option>
                 <option>Academic</option>
                 <option>Holiday</option>
@@ -129,10 +129,10 @@ export default function NoticesTab({ token, showSuccess }) {
           </div>
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Content</label>
-            <textarea required rows="4" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Notice details..."></textarea>
+            <textarea required rows="4" value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" placeholder="Notice details..."></textarea>
           </div>
           <div className="flex items-center gap-2">
-            <input type="checkbox" id="important" checked={formData.isImportant} onChange={e => setFormData({...formData, isImportant: e.target.checked})} className="w-4 h-4 text-primary rounded border-slate-300" />
+            <input type="checkbox" id="important" checked={formData.isImportant} onChange={e => setFormData({ ...formData, isImportant: e.target.checked })} className="w-4 h-4 text-primary rounded border-slate-300" />
             <label htmlFor="important" className="text-sm font-bold text-slate-700">Mark as Important (Highlight)</label>
           </div>
           <div className="flex justify-end">

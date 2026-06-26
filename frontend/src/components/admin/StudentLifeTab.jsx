@@ -4,17 +4,17 @@ import { Plus, Trash2, Edit2, Upload, Image as ImageIcon, Video, Search, CheckCi
 export default function StudentLifeTab({ token, showSuccess }) {
   const [activeSubTab, setActiveSubTab] = useState('toppers'); // 'toppers', 'achievements', 'gallery'
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Data
   const [toppers, setToppers] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [gallery, setGallery] = useState([]);
-  
+
   // Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  
+
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
 
@@ -25,12 +25,12 @@ export default function StudentLifeTab({ token, showSuccess }) {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const endpoint = 
+      const endpoint =
         activeSubTab === 'toppers' ? '/api/student-life/toppers' :
-        activeSubTab === 'achievements' ? '/api/student-life/achievements' : 
-        '/api/student-life/gallery';
-        
-      const res = await fetch(`http://localhost:5000${endpoint}`);
+          activeSubTab === 'achievements' ? '/api/student-life/achievements' :
+            '/api/student-life/gallery';
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`);
       if (res.ok) {
         const data = await res.json();
         if (activeSubTab === 'toppers') setToppers(data);
@@ -49,7 +49,7 @@ export default function StudentLifeTab({ token, showSuccess }) {
     setIsEditing(false);
     setEditId(null);
     setFile(null);
-    
+
     if (activeSubTab === 'toppers') {
       setFormData({ name: '', grade: '', score: '', academicYear: '', achievementDesc: '', displayOrder: 0, status: 'Published' });
     } else if (activeSubTab === 'achievements') {
@@ -74,14 +74,14 @@ export default function StudentLifeTab({ token, showSuccess }) {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
-    
-    const endpoint = 
+
+    const endpoint =
       activeSubTab === 'toppers' ? `/api/student-life/toppers/${id}` :
-      activeSubTab === 'achievements' ? `/api/student-life/achievements/${id}` : 
-      `/api/student-life/gallery/${id}`;
-      
+        activeSubTab === 'achievements' ? `/api/student-life/achievements/${id}` :
+          `/api/student-life/gallery/${id}`;
+
     try {
-      const res = await fetch(`http://localhost:5000${endpoint}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -104,12 +104,12 @@ export default function StudentLifeTab({ token, showSuccess }) {
       data.append(activeSubTab === 'gallery' ? 'media' : 'image', file);
     }
 
-    const endpoint = 
+    const endpoint =
       activeSubTab === 'toppers' ? `/api/student-life/toppers` :
-      activeSubTab === 'achievements' ? `/api/student-life/achievements` : 
-      `/api/student-life/gallery`;
-      
-    const url = isEditing ? `http://localhost:5000${endpoint}/${editId}` : `http://localhost:5000${endpoint}`;
+        activeSubTab === 'achievements' ? `/api/student-life/achievements` :
+          `/api/student-life/gallery`;
+
+    const url = isEditing ? `${import.meta.env.VITE_API_URL}${endpoint}/${editId}` : `${import.meta.env.VITE_API_URL}${endpoint}`;
     const method = isEditing ? 'PUT' : 'POST';
 
     try {
@@ -135,7 +135,7 @@ export default function StudentLifeTab({ token, showSuccess }) {
           <h2 className="text-2xl font-black text-slate-800">Student Life Management</h2>
           <p className="text-slate-500 text-sm">Manage toppers, achievements, and the student life media gallery.</p>
         </div>
-        <button 
+        <button
           onClick={openAddForm}
           className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 shadow-sm"
         >
@@ -156,7 +156,7 @@ export default function StudentLifeTab({ token, showSuccess }) {
             <h3 className="text-lg font-bold text-slate-800">{isEditing ? 'Edit' : 'Add New'} {activeSubTab === 'toppers' ? 'Topper' : activeSubTab === 'achievements' ? 'Achievement' : 'Gallery Item'}</h3>
             <button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><XCircle size={24} /></button>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* File Upload (Image / Video) */}
             <div>
@@ -170,63 +170,63 @@ export default function StudentLifeTab({ token, showSuccess }) {
               {/* TOPPERS FORM */}
               {activeSubTab === 'toppers' && (
                 <>
-                  <div><label className="block text-sm font-bold mb-2">Student Name</label><input required value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full border p-2 rounded-xl" /></div>
-                  <div><label className="block text-sm font-bold mb-2">Grade/Class</label><input required value={formData.grade || ''} onChange={e => setFormData({...formData, grade: e.target.value})} className="w-full border p-2 rounded-xl" placeholder="e.g. Grade 12 (CBSE Science)" /></div>
-                  <div><label className="block text-sm font-bold mb-2">Score/Percentage</label><input required value={formData.score || ''} onChange={e => setFormData({...formData, score: e.target.value})} className="w-full border p-2 rounded-xl" placeholder="e.g. 98.6%" /></div>
-                  <div><label className="block text-sm font-bold mb-2">Academic Year</label><input value={formData.academicYear || ''} onChange={e => setFormData({...formData, academicYear: e.target.value})} className="w-full border p-2 rounded-xl" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Student Name</label><input required value={formData.name || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full border p-2 rounded-xl" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Grade/Class</label><input required value={formData.grade || ''} onChange={e => setFormData({ ...formData, grade: e.target.value })} className="w-full border p-2 rounded-xl" placeholder="e.g. Grade 12 (CBSE Science)" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Score/Percentage</label><input required value={formData.score || ''} onChange={e => setFormData({ ...formData, score: e.target.value })} className="w-full border p-2 rounded-xl" placeholder="e.g. 98.6%" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Academic Year</label><input value={formData.academicYear || ''} onChange={e => setFormData({ ...formData, academicYear: e.target.value })} className="w-full border p-2 rounded-xl" /></div>
                 </>
               )}
 
               {/* ACHIEVEMENTS FORM */}
               {activeSubTab === 'achievements' && (
                 <>
-                  <div><label className="block text-sm font-bold mb-2">Achievement Title</label><input required value={formData.title || ''} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full border p-2 rounded-xl" /></div>
-                  <div><label className="block text-sm font-bold mb-2">Student/Team Name</label><input value={formData.studentName || ''} onChange={e => setFormData({...formData, studentName: e.target.value})} className="w-full border p-2 rounded-xl" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Achievement Title</label><input required value={formData.title || ''} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full border p-2 rounded-xl" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Student/Team Name</label><input value={formData.studentName || ''} onChange={e => setFormData({ ...formData, studentName: e.target.value })} className="w-full border p-2 rounded-xl" /></div>
                   <div>
                     <label className="block text-sm font-bold mb-2">Category</label>
-                    <select value={formData.category || 'Academic'} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full border p-2 rounded-xl">
+                    <select value={formData.category || 'Academic'} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full border p-2 rounded-xl">
                       <option>Academic</option><option>Sports</option><option>Cultural</option><option>Competition</option><option>Olympiad</option><option>Other</option>
                     </select>
                   </div>
-                  <div><label className="block text-sm font-bold mb-2">Badge Text</label><input value={formData.badge || ''} onChange={e => setFormData({...formData, badge: e.target.value})} className="w-full border p-2 rounded-xl" placeholder="e.g. State Rank" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Badge Text</label><input value={formData.badge || ''} onChange={e => setFormData({ ...formData, badge: e.target.value })} className="w-full border p-2 rounded-xl" placeholder="e.g. State Rank" /></div>
                 </>
               )}
 
               {/* GALLERY FORM */}
               {activeSubTab === 'gallery' && (
                 <>
-                  <div><label className="block text-sm font-bold mb-2">Media Title</label><input value={formData.title || ''} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full border p-2 rounded-xl" /></div>
-                  <div><label className="block text-sm font-bold mb-2">Event Name</label><input value={formData.eventName || ''} onChange={e => setFormData({...formData, eventName: e.target.value})} className="w-full border p-2 rounded-xl" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Media Title</label><input value={formData.title || ''} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full border p-2 rounded-xl" /></div>
+                  <div><label className="block text-sm font-bold mb-2">Event Name</label><input value={formData.eventName || ''} onChange={e => setFormData({ ...formData, eventName: e.target.value })} className="w-full border p-2 rounded-xl" /></div>
                   <div>
                     <label className="block text-sm font-bold mb-2">Category</label>
-                    <select value={formData.category || 'Classroom Activities'} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full border p-2 rounded-xl">
+                    <select value={formData.category || 'Classroom Activities'} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full border p-2 rounded-xl">
                       <option>Classroom Activities</option><option>Sports Events</option><option>Annual Day</option><option>Cultural Events</option><option>Educational Tours</option><option>Science Exhibition</option><option>Competitions</option><option>Celebrations</option><option>Student Activities</option><option>Other</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-bold mb-2">Media Type</label>
-                    <select value={formData.mediaType || 'image'} onChange={e => setFormData({...formData, mediaType: e.target.value})} className="w-full border p-2 rounded-xl">
+                    <select value={formData.mediaType || 'image'} onChange={e => setFormData({ ...formData, mediaType: e.target.value })} className="w-full border p-2 rounded-xl">
                       <option value="image">Image</option><option value="video">Video (MP4)</option>
                     </select>
                   </div>
                 </>
               )}
             </div>
-            
+
             {/* Common Fields */}
             <div>
               <label className="block text-sm font-bold mb-2">Description / Description</label>
-              <textarea value={formData.description || formData.achievementDesc || ''} onChange={e => setFormData({...formData, description: e.target.value, achievementDesc: e.target.value})} className="w-full border p-2 rounded-xl" rows={3}></textarea>
+              <textarea value={formData.description || formData.achievementDesc || ''} onChange={e => setFormData({ ...formData, description: e.target.value, achievementDesc: e.target.value })} className="w-full border p-2 rounded-xl" rows={3}></textarea>
             </div>
-            
+
             <div className="flex gap-4">
               <div>
                 <label className="block text-sm font-bold mb-2">Display Order</label>
-                <input type="number" value={formData.displayOrder || 0} onChange={e => setFormData({...formData, displayOrder: e.target.value})} className="w-full border p-2 rounded-xl" />
+                <input type="number" value={formData.displayOrder || 0} onChange={e => setFormData({ ...formData, displayOrder: e.target.value })} className="w-full border p-2 rounded-xl" />
               </div>
               <div>
                 <label className="block text-sm font-bold mb-2">Status</label>
-                <select value={formData.status || 'Published'} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full border p-2 rounded-xl">
+                <select value={formData.status || 'Published'} onChange={e => setFormData({ ...formData, status: e.target.value })} className="w-full border p-2 rounded-xl">
                   <option value="Published">Published</option><option value="Draft">Draft</option>
                 </select>
               </div>
@@ -264,7 +264,7 @@ export default function StudentLifeTab({ token, showSuccess }) {
                           {item.mediaType === 'video' ? (
                             <div className="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center text-slate-400"><FileVideo size={24} /></div>
                           ) : item.imageUrl || item.mediaUrl ? (
-                            <img src={`http://localhost:5000${item.imageUrl || item.mediaUrl}`} className="w-16 h-16 object-cover rounded-lg shadow-sm" alt="Thumbnail" />
+                            <img src={`${import.meta.env.VITE_API_URL}${item.imageUrl || item.mediaUrl}`} className="w-16 h-16 object-cover rounded-lg shadow-sm" alt="Thumbnail" />
                           ) : (
                             <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400"><ImageIcon size={24} /></div>
                           )}

@@ -8,17 +8,17 @@ export default function StudentLife() {
   const [dynamicGallery, setDynamicGallery] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/student-life/toppers')
+    fetch('${import.meta.env.VITE_API_URL}/api/student-life/toppers')
       .then(r => r.json())
       .then(d => setDynamicToppers(d.filter(x => x.status === 'Published')))
       .catch(e => console.error(e));
 
-    fetch('http://localhost:5000/api/student-life/achievements')
+    fetch('${import.meta.env.VITE_API_URL}/api/student-life/achievements')
       .then(r => r.json())
       .then(d => setDynamicAchievements(d.filter(x => x.status === 'Published')))
       .catch(e => console.error(e));
 
-    fetch('http://localhost:5000/api/student-life/gallery')
+    fetch('${import.meta.env.VITE_API_URL}/api/student-life/gallery')
       .then(r => r.json())
       .then(d => setDynamicGallery(d.filter(x => x.status === 'Published')))
       .catch(e => console.error(e));
@@ -37,21 +37,21 @@ export default function StudentLife() {
   ];
 
   const allToppers = [
-    ...dynamicToppers.map(t => ({ 
-      name: t.name, 
-      grade: t.grade, 
-      score: t.score, 
-      image: t.imageUrl ? `http://localhost:5000${t.imageUrl}` : 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' 
+    ...dynamicToppers.map(t => ({
+      name: t.name,
+      grade: t.grade,
+      score: t.score,
+      image: t.imageUrl ? `${import.meta.env.VITE_API_URL}${t.imageUrl}` : 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200'
     })),
     ...staticToppers
   ];
 
   const allAccomplishments = [
-    ...dynamicAchievements.map(a => ({ 
-      badge: a.badge || a.category, 
-      title: a.title, 
-      desc: a.description, 
-      image: a.imageUrl ? `http://localhost:5000${a.imageUrl}` : 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&q=80&w=600' 
+    ...dynamicAchievements.map(a => ({
+      badge: a.badge || a.category,
+      title: a.title,
+      desc: a.description,
+      image: a.imageUrl ? `${import.meta.env.VITE_API_URL}${a.imageUrl}` : 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&q=80&w=600'
     })),
     ...staticAccomplishments
   ];
@@ -137,9 +137,9 @@ export default function StudentLife() {
                 <AnimatedSection key={`dyn-${item._id}`} delay={idx * 0.1} className="bg-white rounded-2xl overflow-hidden shadow-premium border border-slate-100 hover:shadow-premium-hover transition-shadow duration-300 group">
                   <div className="relative h-48 overflow-hidden bg-slate-50">
                     {item.mediaType === 'video' ? (
-                      <video src={`http://localhost:5000${item.mediaUrl}`} className="w-full h-full object-cover" controls preload="metadata" />
+                      <video src={`${import.meta.env.VITE_API_URL}${item.mediaUrl}`} className="w-full h-full object-cover" controls preload="metadata" />
                     ) : (
-                      <img src={`http://localhost:5000${item.mediaUrl}`} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={`${import.meta.env.VITE_API_URL}${item.mediaUrl}`} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     )}
                   </div>
                   <div className="p-3">

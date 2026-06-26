@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
+import {
   ArrowRight, BookOpen, Users, Trophy, ChevronRight, CheckCircle, Star, Phone, Mail, MapPin, Calendar, Clock, Quote, ArrowUpRight, GraduationCap, Building, Activity, Sparkles, X, Info, Compass, Shield, Play, Award, Bus, MessageSquare, FileText, HelpCircle, Send
 } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -76,10 +76,10 @@ export default function Home() {
     // Fetch dynamic notices & events
     const fetchHomeData = async () => {
       try {
-        const noticesRes = await fetch('http://localhost:5000/api/notices');
-        const eventsRes = await fetch('http://localhost:5000/api/events');
-        const galleryRes = await fetch('http://localhost:5000/api/gallery');
-        const settingsRes = await fetch('http://localhost:5000/api/settings');
+        const noticesRes = await fetch('${import.meta.env.VITE_API_URL}/api/notices');
+        const eventsRes = await fetch('${import.meta.env.VITE_API_URL}/api/events');
+        const galleryRes = await fetch('${import.meta.env.VITE_API_URL}/api/gallery');
+        const settingsRes = await fetch('${import.meta.env.VITE_API_URL}/api/settings');
         if (noticesRes.ok) setNotices(await noticesRes.json());
         if (eventsRes.ok) setEvents(await eventsRes.json());
         if (galleryRes.ok) setGallery(await galleryRes.json());
@@ -101,7 +101,7 @@ export default function Home() {
     setEnquiryLoading(true);
     try {
       // Map to general inquiries route on server
-      const response = await fetch('http://localhost:5000/api/inquiries', {
+      const response = await fetch('${import.meta.env.VITE_API_URL}/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -145,38 +145,39 @@ export default function Home() {
 
   return (
     <div className="overflow-hidden">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "EducationalOrganization",
-        "name": settings.websiteTitle || "VillZone International School",
-        "description": settings.defaultMetaDescription,
-        "url": settings.canonicalDomain || "https://villzone.edu.in",
-        "telephone": settings.schoolPhone,
-        "email": settings.schoolEmail,
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": settings.schoolAddress,
-          "addressLocality": "Tiruvannamalai",
-          "addressRegion": "Tamil Nadu",
-          "addressCountry": "IN"
-        },
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "Admissions",
+      <script type="application/ld+json" dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "EducationalOrganization",
+          "name": settings.websiteTitle || "VillZone International School",
+          "description": settings.defaultMetaDescription,
+          "url": settings.canonicalDomain || "https://villzone.edu.in",
           "telephone": settings.schoolPhone,
-          "email": settings.schoolEmail
-        }
-      })}} />
-      
+          "email": settings.schoolEmail,
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": settings.schoolAddress,
+            "addressLocality": "Tiruvannamalai",
+            "addressRegion": "Tamil Nadu",
+            "addressCountry": "IN"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Admissions",
+            "telephone": settings.schoolPhone,
+            "email": settings.schoolEmail
+          }
+        })
+      }} />
+
       {/* 1. HERO SECTION WITH CUSTOM AUTO SLIDER */}
       <section className="relative min-h-[90vh] flex items-center justify-center text-white bg-slate-950 overflow-hidden">
         {/* Slide backgrounds */}
         {slides.map((slide, idx) => (
           <div
             key={idx}
-            className={`absolute inset-0 bg-cover bg-center transition-all duration-[1500ms] ease-in-out ${
-              idx === currentSlide ? 'opacity-40 scale-100' : 'opacity-0 scale-105 pointer-events-none'
-            }`}
+            className={`absolute inset-0 bg-cover bg-center transition-all duration-[1500ms] ease-in-out ${idx === currentSlide ? 'opacity-40 scale-100' : 'opacity-0 scale-105 pointer-events-none'
+              }`}
             style={{ backgroundImage: `url('${slide.img}')` }}
           />
         ))}
@@ -189,7 +190,7 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-accent font-bold text-xs uppercase tracking-widest mb-6 animate-float">
             <Star size={14} className="fill-accent" /> Admissions Open For 2026-27 <Star size={14} className="fill-accent" />
           </div>
-          
+
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight mb-6 animate-fadeIn">
             {slides[currentSlide].title}
           </h1>
@@ -219,9 +220,8 @@ export default function Home() {
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                idx === currentSlide ? 'bg-accent w-6' : 'bg-white/40 hover:bg-white/60'
-              }`}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentSlide ? 'bg-accent w-6' : 'bg-white/40 hover:bg-white/60'
+                }`}
             />
           ))}
         </div>
@@ -251,10 +251,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <AnimatedSection>
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=800" 
-                alt="VillZone Classroom" 
-                className="rounded-2xl shadow-2xl border-4 border-white object-cover h-[450px] w-full" 
+              <img
+                src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=800"
+                alt="VillZone Classroom"
+                className="rounded-2xl shadow-2xl border-4 border-white object-cover h-[450px] w-full"
               />
               <div className="absolute -bottom-6 -right-6 bg-accent text-primary-dark p-6 rounded-2xl shadow-xl hidden sm:block max-w-xs">
                 <p className="font-extrabold text-lg">Since 2006</p>
@@ -293,7 +293,7 @@ export default function Home() {
           </AnimatedSection>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            
+
             {/* Left Column: Content */}
             <AnimatedSection delay={0.1} className="space-y-6">
               <h3 className="text-2xl font-bold text-slate-800">VillZone Educational Trust</h3>
@@ -303,7 +303,7 @@ export default function Home() {
               <p className="text-slate-600 text-sm leading-relaxed">
                 The trust is committed to creating world-class educational opportunities while maintaining affordability, inclusivity, and strong moral values.
               </p>
-              
+
               <ul className="space-y-3 mt-6">
                 <li className="flex items-center gap-3 text-sm font-semibold text-slate-700">
                   <CheckCircle size={18} className="text-secondary shrink-0" />
@@ -322,7 +322,7 @@ export default function Home() {
                   Commitment to Academic Excellence
                 </li>
               </ul>
-              
+
               <div className="pt-6">
                 <Link to="/about-trust" className="inline-flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-primary-dark text-white font-extrabold rounded-xl shadow-md transition-all text-sm">
                   Learn More About the Trust <ArrowRight size={16} />
@@ -345,7 +345,7 @@ export default function Home() {
                     <p className="text-xs text-slate-500 leading-relaxed">State-of-the-art classrooms, laboratories, libraries, and learning facilities.</p>
                   </div>
                 </div>
-                
+
                 <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex gap-4">
                   <div className="bg-primary/5 p-3 rounded-xl h-fit">
                     <Activity size={20} className="text-primary" />
@@ -386,18 +386,18 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { 
-                title: 'Our Vision', 
+              {
+                title: 'Our Vision',
                 desc: 'To cultivate a learning space where traditional Indian values merge seamlessly with global technology skills, creating tomorrow\'s innovators.',
                 color: 'border-l-primary'
               },
-              { 
-                title: 'Our Mission', 
+              {
+                title: 'Our Mission',
                 desc: 'To provide tailored CBSE and State Board pathways, enabling individualized child-centered development and 100% board exam confidence.',
                 color: 'border-l-secondary'
               },
-              { 
-                title: 'Core Values', 
+              {
+                title: 'Core Values',
                 desc: 'Instilling accountability, academic integrity, gender equality, mutual respect, and a continuous drive for learning and character development.',
                 color: 'border-l-accent'
               }
@@ -416,10 +416,10 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <AnimatedSection className="bg-white rounded-3xl shadow-premium border border-slate-100 overflow-hidden grid grid-cols-1 md:grid-cols-3">
             <div className="h-full min-h-[300px]">
-              <img 
-                src={settings.principalPhotoUrl || "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=600"} 
-                alt="School Principal" 
-                className="w-full h-full object-cover object-top" 
+              <img
+                src={settings.principalPhotoUrl || "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=600"}
+                alt="School Principal"
+                className="w-full h-full object-cover object-top"
               />
             </div>
             <div className="p-8 md:p-12 md:col-span-2 flex flex-col justify-center">

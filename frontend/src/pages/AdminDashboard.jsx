@@ -21,13 +21,13 @@ export default function AdminDashboard() {
   const [role, setRole] = useState('Super Admin');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  
+
   // Data states
   const [stats, setStats] = useState({});
   const [logs, setLogs] = useState([]);
   const [leads, setLeads] = useState([]);
   const [successMsg, setSuccessMsg] = useState('');
-  
+
   // Notification states
   const [hasSeenNotifications, setHasSeenNotifications] = useState(false);
   const [lastSeenCount, setLastSeenCount] = useState(0);
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
     const savedToken = localStorage.getItem('admin_token');
     const name = localStorage.getItem('admin_name');
     const savedRole = localStorage.getItem('admin_role');
-    
+
     if (!savedToken) {
       navigate('/admin-login');
     } else {
@@ -54,9 +54,9 @@ export default function AdminDashboard() {
   const loadDashboardData = async () => {
     try {
       const [statsRes, logsRes, leadsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/admin/stats', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/logs', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/leads', { headers: { Authorization: `Bearer ${token}` } })
+        fetch('${import.meta.env.VITE_API_URL}/api/admin/stats', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('${import.meta.env.VITE_API_URL}/api/logs', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('${import.meta.env.VITE_API_URL}/api/leads', { headers: { Authorization: `Bearer ${token}` } })
       ]);
       if (statsRes.ok) setStats(await statsRes.json());
       if (logsRes.ok) setLogs(await logsRes.json());
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex h-screen bg-[#F8FAFC] text-[#0F172A] font-sans overflow-hidden">
-      
+
       {/* Success Toast */}
       {successMsg && (
         <div className="fixed bottom-6 right-6 bg-slate-900 text-white text-sm font-black px-6 py-4 rounded-2xl shadow-2xl z-50 flex items-center gap-3 animate-fadeIn">
@@ -117,9 +117,9 @@ export default function AdminDashboard() {
       )}
 
       {/* Sidebar (Responsive) */}
-      <AdminSidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+      <AdminSidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         unreadCount={displayUnreadCount}
         role={role}
         isSidebarOpen={isSidebarOpen}
@@ -129,14 +129,14 @@ export default function AdminDashboard() {
       {/* Main Content Wrapper */}
       <div className="flex flex-col flex-1 min-w-0">
         {/* Topbar */}
-        <AdminTopbar 
-          setSidebarOpen={setSidebarOpen} 
-          userName={userName} 
-          role={role} 
+        <AdminTopbar
+          setSidebarOpen={setSidebarOpen}
+          userName={userName}
+          role={role}
           unreadCount={displayUnreadCount}
           setActiveTab={setActiveTab}
         />
-        
+
         {/* Scrollable Content Area */}
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
