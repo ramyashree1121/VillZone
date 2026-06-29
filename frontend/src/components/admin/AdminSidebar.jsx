@@ -1,7 +1,6 @@
-import React from 'react';
 import {
-  BarChart3, FileText, Calendar, Image, Inbox, Settings,
-  User, Search, GraduationCap, Users, LogOut, MessageSquare, X, Globe, BookOpen, Star
+  BarChart3, FileText, Calendar, Image, Inbox,
+  User, GraduationCap, Users, LogOut, MessageSquare, X, Globe, BookOpen, Star, Target
 } from 'lucide-react';
 
 export default function AdminSidebar({ activeTab, setActiveTab, unreadCount, role, isSidebarOpen, setSidebarOpen }) {
@@ -18,11 +17,11 @@ export default function AdminSidebar({ activeTab, setActiveTab, unreadCount, rol
     { id: 'campus-visits', label: 'Campus Visits', icon: Users, roles: ['Super Admin', 'Admission Officer', 'Content Manager'] },
     { id: 'inquiries', label: 'Contact Enquiries', icon: Inbox, roles: ['Super Admin', 'Content Manager', 'Admission Officer'] },
     { id: 'ai-leads', label: 'AI Assistant Leads', icon: MessageSquare, roles: ['Super Admin', 'Admission Officer', 'Content Manager'] },
-    { id: 'notices', label: 'News & Alerts', icon: FileText, roles: ['Super Admin', 'Content Manager'] },
-    { id: 'events', label: 'Events', icon: Calendar, roles: ['Super Admin', 'Content Manager'] },
+    { id: 'news-events', label: 'News & Events', icon: FileText, roles: ['Super Admin', 'Content Manager'] },
     { id: 'gallery', label: 'Gallery', icon: Image, roles: ['Super Admin', 'Content Manager'] },
     { id: 'faculty', label: 'Faculty', icon: User, roles: ['Super Admin', 'Content Manager'] },
-    { id: 'syllabus', label: 'Syllabus', icon: BookOpen, roles: ['Super Admin', 'Content Manager'] },
+    { id: 'leadership', label: 'Leadership', icon: Users, roles: ['Super Admin', 'Content Manager'] },
+    { id: 'curriculum', label: 'Curriculum', icon: Target, roles: ['Super Admin', 'Content Manager'] },
     { id: 'student-life', label: 'Student Life', icon: Star, roles: ['Super Admin', 'Content Manager'] },
   ];
 

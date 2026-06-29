@@ -1,12 +1,22 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import AnimatedSection from '../components/AnimatedSection';
 
 export default function Uniform() {
-  const uniforms = [
-    { title: 'Regular Boys Uniform', desc: 'Light blue pin-striped short-sleeve shirt, dark navy trousers/shorts, school belt, dark blue socks, and polished black shoes.', image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=400' },
-    { title: 'Regular Girls Uniform', desc: 'Light blue pin-striped shirt, navy pleated skirt / pinafore, navy blue cycling shorts, school belt, dark blue socks, and black shoes.', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400' },
-    { title: 'Sports House Uniform', desc: 'Coloured breathable dry-fit T-shirt (Red, Blue, Green, or Gold house specific), white track pants, white socks, and white sports sneakers.', image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=400' }
-  ];
+  const [uniforms, setUniforms] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/uniforms`)
+      .then(res => res.json())
+      .then(data => {
+        setUniforms(data.filter(u => u.status === 'Published'));
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching uniforms:", err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="pt-0 bg-slate-50 min-h-screen">
@@ -23,19 +33,27 @@ export default function Uniform() {
       {/* Grid */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {uniforms.map((uni, idx) => (
-              <AnimatedSection key={idx} delay={idx * 0.1} className="bg-white rounded-2xl overflow-hidden shadow-premium border border-slate-100 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
-                <div className="relative h-60 overflow-hidden bg-slate-50">
-                  <img src={uni.image} alt={uni.title} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-6">
-                  <h3 className="font-extrabold text-primary text-lg mb-2">{uni.title}</h3>
-                  <p className="text-slate-600 text-xs leading-relaxed">{uni.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+            </div>
+          ) : uniforms.length === 0 ? (
+            <div className="text-center text-slate-500 py-12">No uniform guidelines available at the moment.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {uniforms.map((uni, idx) => (
+                <AnimatedSection key={idx} delay={idx * 0.1} className="bg-white rounded-2xl overflow-hidden shadow-premium border border-slate-100 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                  <div className="relative h-60 overflow-hidden bg-slate-50">
+                    <img src={uni.imageUrl?.startsWith('http') ? uni.imageUrl : `${import.meta.env.VITE_API_URL}${uni.imageUrl}`} alt={uni.title} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=400'; }} />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-extrabold text-primary text-lg mb-2">{uni.title}</h3>
+                    <p className="text-slate-600 text-xs leading-relaxed">{uni.description}</p>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,26 +1,27 @@
-import React from 'react';
-import { Mail, ShieldCheck, GraduationCap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Mail, ShieldCheck } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 
 export default function Management() {
-  const leadership = [
-    {
-      role: 'Correspondent',
-      name: 'Dr. Vikram A. Dev, Ph.D.',
-      qualification: 'M.Tech, Ph.D. (IIT Madras), Former Advisor to Education Board',
-      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
-      message: 'Education is the most powerful tool to bridge societal divisions. At VillZone, our goal is to build an environment where students from every background gain absolute mastery in both sciences and life ethics. We ensure that our infrastructure matches international colleges, giving rural students equal chances at national ranks.',
-      email: 'correspondent@villzoneschool.edu.in'
-    },
-    {
-      role: 'Principal',
-      name: 'Mrs. Shalini R. Prasad, M.Ed.',
-      qualification: 'M.Sc., M.Ed., 18+ Years Administrative Experience in Top CBSE Schools',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
-      message: 'School is not just about writing exams; it is about exploring fields, finding talents, and cultivating self-discipline. Our CBSE and State Board courses are designed with active visual methods to prepare students for real-world application. My door is always open to parents who wish to collaborate on their child\'s developmental journey.',
-      email: 'principal@villzoneschool.edu.in'
-    }
-  ];
+  const [leadership, setLeadership] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLeadership = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/leadership`);
+        if (response.ok) {
+          const data = await response.json();
+          setLeadership(data.filter(member => member.status === 'Active'));
+        }
+      } catch (err) {
+        console.error('Error fetching leadership:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLeadership();
+  }, []);
 
   return (
     <div className="pt-0 bg-slate-50 min-h-screen">
@@ -38,15 +39,25 @@ export default function Management() {
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           
-          {leadership.map((leader, index) => (
-            <AnimatedSection key={index} className="bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden grid grid-cols-1 md:grid-cols-3">
-              
-              {/* Leader Photo */}
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : leadership.length === 0 ? (
+            <div className="text-center py-20 text-slate-500 font-bold">
+              Leadership profiles are currently being updated. Please check back later.
+            </div>
+          ) : (
+            leadership.map((leader, index) => (
+              <AnimatedSection key={leader._id || index} className="bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden grid grid-cols-1 md:grid-cols-3">
+                
+                {/* Leader Photo */}
               <div className="relative group overflow-hidden md:col-span-1 min-h-[300px] bg-slate-100 flex items-center justify-center">
                 <img
-                  src={leader.image}
+                  src={leader.image?.startsWith('http') || leader.image?.startsWith('data:') ? leader.image : `${import.meta.env.VITE_API_URL}${leader.image}`}
                   alt={leader.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/400x500?text=Leadership'; }}
                 />
                 <div className="absolute top-4 left-4 bg-primary/95 text-accent font-bold text-xs uppercase px-3.5 py-1.5 rounded-full shadow-md">
                   {leader.role}
@@ -75,8 +86,9 @@ export default function Management() {
                 </div>
               </div>
 
-            </AnimatedSection>
-          ))}
+              </AnimatedSection>
+            ))
+          )}
 
         </div>
       </section>

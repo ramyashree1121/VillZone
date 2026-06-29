@@ -1,163 +1,167 @@
-import React, { useState } from 'react';
-import { BookOpen, GraduationCap, Award, CheckCircle } from 'lucide-react';
-import AnimatedSection from '../components/AnimatedSection';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, CheckCircle, Brain, Monitor, Users, Target, Award, Shield } from 'lucide-react';
 
 export default function Academics() {
-  const [activeTab, setActiveTab] = useState('CBSE');
-  const [gradeTab, setGradeTab] = useState('Primary');
+  const [activeTab, setActiveTab] = useState('Kindergarten');
+  const [curriculumBoards, setCurriculumBoards] = useState([]);
+  const [curriculumFeatures, setCurriculumFeatures] = useState([]);
+  const [curriculumCategories, setCurriculumCategories] = useState([]);
+  const [isCurriculumLoading, setIsCurriculumLoading] = useState(true);
 
-  const curriculumDetails = {
-    CBSE: {
-      title: 'CBSE Curriculum (Central Board of Secondary Education)',
-      description: 'Our CBSE wing focuses on application-based conceptual study, preparation for national level competitive examinations (JEE, NEET, CUET), and development of high analytical ability. It runs from Pre-KG up to Grade 12.',
-      features: [
-        'National system alignment for easy transfers.',
-        'Continuous evaluation and active skill mapping.',
-        'Integrated training modules for science and mathematics.',
-        'Extensive digital lab support.'
-      ]
-    },
-    StateBoard: {
-      title: 'State Board Curriculum (Government of Tamil Nadu / State Syllabus)',
-      description: 'The State Board stream provides deep local context, high scoring syllabus patterns, and specialized focus on local engineering and medical counseling systems (TNEA). It offers a rich foundation in languages and sciences.',
-      features: [
-        'Focused training to secure maximum board exam percentages.',
-        'Specialized language mastery programs.',
-        'In-depth laboratory sessions matching university levels.',
-        'Subsidized material cost options.'
-      ]
-    }
-  };
+  useEffect(() => {
+    document.title = "Curriculum | Villzone School | Pre-KG to Grade 12";
 
-  const gradeSubjects = {
-    Kindergarten: {
-      grades: 'Pre-KG, LKG, UKG',
-      focus: 'Foundational literacy, motor skill cultivation, social values, and play-way interactive modules.',
-      subjects: ['Phonics & English Reading', 'Basic Mathematics & Counting', 'EVS & Nature Studies', 'Storytelling, Music & Art', 'Fine Motor Activities']
-    },
-    Primary: {
-      grades: 'Grade 1 to Grade 5',
-      focus: 'Building core analytical capabilities in languages, science, and arithmetic.',
-      subjects: ['English Language & Grammar', 'Second Language (Hindi/Tamil)', 'Mathematics', 'General Science', 'Social Studies', 'Computer Literacy', 'Arts & Value Education']
-    },
-    Middle: {
-      grades: 'Grade 6 to Grade 8',
-      focus: 'Transitioning to advanced scientific frameworks, project exhibitions, and second/third language integration.',
-      subjects: ['Advanced English', 'Second Language', 'Third Language (Sanskrit/French/Local)', 'Physics, Chemistry & Biology', 'History, Civics & Geography', 'Foundational Coding & ICT', 'Physical Education']
-    },
-    HighSchool: {
-      grades: 'Grade 9 & Grade 10',
-      focus: 'Board exam preparation, advanced experimental projects, and career exploration sessions.',
-      subjects: ['English Communications', 'Second Language', 'Mathematics (Core/Standard)', 'Integrated Sciences (Lab based)', 'Social Sciences (History, Geography, Economics, Pol. Science)', 'Information Technology (AI/Coding)']
-    },
-    HigherSecondary: {
-      grades: 'Grade 11 & Grade 12',
-      focus: 'Stream-specific professional preparation with daily mock-test cycles.',
-      subjects: [
-        'Science Stream: Physics, Chemistry, Mathematics, Biology / Computer Science, English.',
-        'Commerce Stream: Accountancy, Business Studies, Economics, Computer Applications / Mathematics, English.',
-        'Arts Stream: History, Economics, Political Science, Geography, English.'
-      ]
-    }
-  };
+    // Fetch Dynamic Curriculum Data
+    Promise.all([
+      fetch(`${import.meta.env.VITE_API_URL}/api/curriculum-boards`),
+      fetch(`${import.meta.env.VITE_API_URL}/api/curriculum-features`),
+      fetch(`${import.meta.env.VITE_API_URL}/api/curriculum-categories`)
+    ])
+      .then(async ([boardsRes, featuresRes, categoriesRes]) => {
+        if (boardsRes.ok) {
+          const boards = await boardsRes.json();
+          setCurriculumBoards(boards.filter(b => b.status === 'Active'));
+        }
+        if (featuresRes.ok) {
+          const features = await featuresRes.json();
+          setCurriculumFeatures(features.filter(f => f.status === 'Active'));
+        }
+        if (categoriesRes.ok) {
+          const categories = await categoriesRes.json();
+          const activeCategories = categories.filter(c => c.status === 'Active');
+          setCurriculumCategories(activeCategories);
+          if (activeCategories.length > 0) {
+            setActiveTab(activeCategories[0].idName);
+          }
+        }
+        setIsCurriculumLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching dynamic curriculum:', err);
+        setIsCurriculumLoading(false);
+      });
+  }, []);
+
+  const icons = [Target, BookOpen, Monitor, Users, Award, Shield, Brain];
+
+  const activeCategoryData = curriculumCategories.find(c => c.idName === activeTab);
 
   return (
-    <div className="pt-0 bg-slate-50 min-h-screen">
-      
-      {/* Banner */}
-      <section className="bg-primary text-white py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1000')" }} />
-        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-4xl font-extrabold mb-2">Academics & Curriculum</h1>
-          <p className="text-slate-200 max-w-xl mx-auto font-light">Custom curriculum pathways for pre-kindergarten to higher secondary grades.</p>
+    <div className="min-h-screen bg-white font-sans text-slate-800">
+
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 bg-[#0A1128] overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-400 via-transparent to-transparent"></div>
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white mb-6">
+            <BookOpen size={16} className="text-blue-300" />
+            <span className="text-sm font-bold tracking-wide uppercase">Curriculum Framework</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">Curriculum</h1>
+          <p className="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+            A comprehensive, modern educational approach designed to foster holistic development and academic excellence across all grade levels.
+          </p>
         </div>
       </section>
 
-      {/* Curriculum Selector */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="flex justify-center gap-4 mb-10">
-            {Object.keys(curriculumDetails).map((key) => (
-              <button
-                key={key}
-                onClick={() => setActiveTab(key)}
-                className={`px-6 py-3 rounded-full font-bold text-sm shadow-premium transition-all ${
-                  activeTab === key
-                    ? 'bg-primary text-white'
-                    : 'bg-white text-primary hover:bg-slate-100'
-                }`}
-              >
-                {key === 'CBSE' ? 'CBSE Stream' : 'State Board Stream'}
-              </button>
-            ))}
+      {/* About Our Curriculum / Stats */}
+      <section className="py-16 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-black text-[#0A1128] mb-4">About Our Curriculum</h2>
+            <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
           </div>
 
-          <AnimatedSection className="bg-white p-8 rounded-2xl border border-slate-100 shadow-premium">
-            <h3 className="text-2xl font-extrabold text-primary mb-4">
-              {curriculumDetails[activeTab].title}
-            </h3>
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
-              {curriculumDetails[activeTab].description}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {curriculumDetails[activeTab].features.map((feat, index) => (
-                <div key={index} className="flex gap-3 items-start">
-                  <CheckCircle size={18} className="text-secondary shrink-0 mt-0.5" />
-                  <span className="text-slate-700 text-sm">{feat}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {curriculumBoards.map((board, idx) => {
+              const Icon = icons[idx % icons.length];
+              return (
+                <div key={board._id || idx} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                  <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-primary mb-4">
+                    <Icon size={28} />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800 mb-1">{board.title}</h3>
+                  <p className="text-sm text-slate-500 font-medium">{board.description}</p>
                 </div>
-              ))}
-            </div>
-          </AnimatedSection>
-
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* Grade Selector Tabs */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedSection className="text-center mb-12">
-            <h2 className="text-xs uppercase tracking-widest text-secondary font-bold mb-2">Subjects Offered</h2>
-            <h3 className="text-3xl font-bold text-primary">Class-wise Core Focus</h3>
-          </AnimatedSection>
+      {/* Class-wise Core Focus (Exact UI Match) */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-black text-[#0A1128] text-center mb-10">Class-wise Core Focus</h2>
 
-          <div className="flex flex-wrap justify-center gap-2 mb-10">
-            {Object.keys(gradeSubjects).map((grade) => (
+          {/* Tabs */}
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
+            {curriculumCategories.map(category => (
               <button
-                key={grade}
-                onClick={() => setGradeTab(grade)}
-                className={`px-5 py-2.5 rounded-lg font-bold text-xs transition-all ${
-                  gradeTab === grade
-                    ? 'bg-secondary text-white shadow-premium'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
+                key={category.idName}
+                onClick={() => setActiveTab(category.idName)}
+                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeTab === category.idName
+                  ? 'bg-[#10B981] text-white shadow-md shadow-emerald-500/20'
+                  : 'bg-[#F3F4F6] text-[#374151] hover:bg-slate-200'
+                  }`}
               >
-                {grade}
+                {category.tabLabel}
               </button>
             ))}
           </div>
 
-          <AnimatedSection key={gradeTab} className="bg-slate-50 p-8 rounded-2xl border border-slate-100 max-w-4xl mx-auto">
-            <div className="mb-6">
-              <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase rounded-full mb-3">
-                {gradeSubjects[gradeTab].grades}
+          {/* Content Card */}
+          {activeCategoryData && (
+            <div className="bg-[#F8FAFC] rounded-[2rem] p-8 md:p-12 border border-slate-100 shadow-sm transition-all duration-500 animate-fadeIn">
+              <span className="inline-block px-4 py-1.5 bg-[#E2E8F0] text-[#1E293B] text-xs font-black rounded-full mb-6 tracking-wider">
+                {activeCategoryData.tags}
               </span>
-              <h4 className="text-xl font-extrabold text-primary mb-2">Academic Objectives & Focus</h4>
-              <p className="text-slate-600 text-sm leading-relaxed">{gradeSubjects[gradeTab].focus}</p>
-            </div>
-            
-            <div>
-              <h5 className="font-bold text-primary text-sm uppercase tracking-wider mb-4">Core Subjects</h5>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {gradeSubjects[gradeTab].subjects.map((subj, idx) => (
-                  <div key={idx} className="p-3 bg-white rounded-lg border border-slate-100 shadow-sm text-sm text-slate-700 font-medium">
-                    {subj}
+
+              <h3 className="text-2xl md:text-3xl font-black text-[#0F172A] mb-3">
+                {activeCategoryData.title}
+              </h3>
+
+              <p className="text-[#475569] text-base mb-10 whitespace-pre-line">
+                {activeCategoryData.description}
+              </p>
+
+              <h4 className="text-xs font-black text-[#0F172A] tracking-widest uppercase mb-5">
+                CORE SUBJECTS
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {activeCategoryData.subjects.map((subject, idx) => (
+                  <div key={idx} className="bg-white px-6 py-4 rounded-xl shadow-sm border border-slate-100 flex items-center text-[#334155] font-bold text-sm">
+                    {subject}
                   </div>
                 ))}
               </div>
             </div>
-          </AnimatedSection>
+          )}
+        </div>
+      </section>
 
+      {/* Teaching Methodology */}
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-black text-[#0A1128] mb-4">Teaching Methodology</h2>
+            <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {curriculumFeatures.map((feature, idx) => (
+              <div key={feature._id || idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-2 hover:-translate-y-1 transition-transform group">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="text-emerald-500 shrink-0 group-hover:scale-110 transition-transform" size={20} />
+                  <span className="text-sm font-bold text-slate-700">{feature.title}</span>
+                </div>
+                {feature.description && (
+                  <p className="text-xs text-slate-500 pl-8">{feature.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

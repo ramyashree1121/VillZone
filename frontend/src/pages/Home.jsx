@@ -20,6 +20,7 @@ export default function Home() {
   const [notices, setNotices] = useState([]);
   const [events, setEvents] = useState([]);
   const [gallery, setGallery] = useState([]);
+  const [principalData, setPrincipalData] = useState(null);
   const [settings, setSettings] = useState({
     academicYear: '2026-27',
     schoolLogoUrl: '',
@@ -76,14 +77,20 @@ export default function Home() {
     // Fetch dynamic notices & events
     const fetchHomeData = async () => {
       try {
-        const noticesRes = await fetch('${import.meta.env.VITE_API_URL}/api/notices');
-        const eventsRes = await fetch('${import.meta.env.VITE_API_URL}/api/events');
-        const galleryRes = await fetch('${import.meta.env.VITE_API_URL}/api/gallery');
-        const settingsRes = await fetch('${import.meta.env.VITE_API_URL}/api/settings');
+        const noticesRes = await fetch(`${import.meta.env.VITE_API_URL}/api/notices`);
+        const eventsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/events`);
+        const galleryRes = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery`);
+        const settingsRes = await fetch(`${import.meta.env.VITE_API_URL}/api/settings`);
+        const leadershipRes = await fetch(`${import.meta.env.VITE_API_URL}/api/leadership`);
         if (noticesRes.ok) setNotices(await noticesRes.json());
         if (eventsRes.ok) setEvents(await eventsRes.json());
         if (galleryRes.ok) setGallery(await galleryRes.json());
         if (settingsRes.ok) setSettings(await settingsRes.json());
+        if (leadershipRes.ok) {
+          const leaders = await leadershipRes.json();
+          const principal = leaders.find(l => l.role === 'Principal' && l.status === 'Active');
+          if (principal) setPrincipalData(principal);
+        }
       } catch (err) {
         console.warn('Backend server offline. Fallbacks active.', err.message);
       }
@@ -101,7 +108,7 @@ export default function Home() {
     setEnquiryLoading(true);
     try {
       // Map to general inquiries route on server
-      const response = await fetch('${import.meta.env.VITE_API_URL}/api/inquiries', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/inquiries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -417,19 +424,20 @@ export default function Home() {
           <AnimatedSection className="bg-white rounded-3xl shadow-premium border border-slate-100 overflow-hidden grid grid-cols-1 md:grid-cols-3">
             <div className="h-full min-h-[300px]">
               <img
-                src={settings.principalPhotoUrl || "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=600"}
+                src={principalData?.image ? (principalData.image.startsWith('http') || principalData.image.startsWith('data:') ? principalData.image : `${import.meta.env.VITE_API_URL}${principalData.image}`) : (settings.principalPhotoUrl || "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=600")}
                 alt="School Principal"
                 className="w-full h-full object-cover object-top"
+                onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/600x600?text=Principal'; }}
               />
             </div>
             <div className="p-8 md:p-12 md:col-span-2 flex flex-col justify-center">
               <span className="text-xs uppercase tracking-widest text-secondary font-bold block mb-2">Welcome Note</span>
               <h3 className="text-2xl font-extrabold text-primary mb-4">From the Principal's Desk</h3>
               <p className="text-slate-600 text-xs italic leading-relaxed mb-6">
-                "{settings.principalMessage}"
+                "{principalData?.message || settings.principalMessage}"
               </p>
               <div>
-                <h4 className="font-bold text-primary">{settings.principalName}</h4>
+                <h4 className="font-bold text-primary">{principalData?.name || settings.principalName}</h4>
                 <p className="text-xs text-slate-500 font-semibold">Principal, VillZone International School</p>
               </div>
             </div>

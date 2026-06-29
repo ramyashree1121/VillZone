@@ -16,7 +16,7 @@ export default function Navbar() {
   });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/settings')
+    fetch(`${import.meta.env.VITE_API_URL}/api/settings`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (data) setSettings(data);
@@ -50,8 +50,7 @@ export default function Navbar() {
     {
       title: 'Academics',
       items: [
-        { label: 'Curriculum & Boards', path: '/academics' },
-        { label: 'Academic Syllabus', path: '/syllabus' },
+        { label: 'Curriculum', path: '/academics' },
         { label: 'Faculty Directory', path: '/faculty' },
         { label: 'School Calendar', path: '/calendar' },
       ],
@@ -116,7 +115,7 @@ export default function Navbar() {
                   Admin Portal
                 </span>
               </div>
-          </div>
+            </div>
           </div>
         </nav>
       </header>
@@ -136,7 +135,7 @@ export default function Navbar() {
             <Mail size={12} className="text-accent" /> {settings.schoolEmail}
           </a>
         </div>
-        
+
         {/* Animated Marquee text */}
         <div className="flex-1 max-w-sm md:max-w-md lg:max-w-xl overflow-hidden relative h-5 hidden sm:flex items-center">
           <div className="animate-marquee whitespace-nowrap text-[11px] font-bold text-accent">
@@ -164,11 +163,10 @@ export default function Navbar() {
 
       {/* 2. STICKY NAVIGATION BAR */}
       <nav
-        className={`w-full transition-all duration-300 ${
-          isScrolled
+        className={`w-full transition-all duration-300 ${isScrolled
             ? 'fixed top-0 left-0 right-0 bg-white/95 text-slate-800 shadow-premium backdrop-blur-md py-3 z-50'
             : 'relative bg-primary text-white py-4'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
@@ -205,11 +203,10 @@ export default function Navbar() {
                   </button>
 
                   <div
-                    className={`absolute left-0 mt-2 w-64 rounded-2xl bg-white text-slate-800 shadow-2xl border border-slate-100 overflow-hidden transition-all duration-300 transform origin-top-left ${
-                      activeDropdown === category.title
+                    className={`absolute left-0 mt-2 w-64 rounded-2xl bg-white text-slate-800 shadow-2xl border border-slate-100 overflow-hidden transition-all duration-300 transform origin-top-left ${activeDropdown === category.title
                         ? 'scale-100 opacity-100 pointer-events-auto'
                         : 'scale-95 opacity-0 pointer-events-none'
-                    }`}
+                      }`}
                   >
                     <div className="p-3 grid gap-1">
                       {category.items.map((item) => (
@@ -232,11 +229,10 @@ export default function Navbar() {
 
               <Link
                 to="/admissions"
-                className={`px-5 py-2.5 rounded-full font-bold text-xs shadow-premium hover:shadow-premium-hover hover:scale-105 active:scale-95 transition-all ${
-                  isScrolled
+                className={`px-5 py-2.5 rounded-full font-bold text-xs shadow-premium hover:shadow-premium-hover hover:scale-105 active:scale-95 transition-all ${isScrolled
                     ? 'bg-secondary text-white hover:bg-secondary-dark'
                     : 'bg-accent text-primary-dark hover:bg-accent-light'
-                }`}
+                  }`}
               >
                 Apply Admission
               </Link>
@@ -252,9 +248,8 @@ export default function Navbar() {
               </Link>
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`p-2 rounded-xl border transition-colors ${
-                  isScrolled ? 'border-slate-200 text-slate-700' : 'border-white/20 text-white'
-                }`}
+                className={`p-2 rounded-xl border transition-colors ${isScrolled ? 'border-slate-200 text-slate-700' : 'border-white/20 text-white'
+                  }`}
               >
                 {isOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -292,7 +287,7 @@ export default function Navbar() {
               <Link to="/contact" className="text-sm font-bold border-b border-white/5 pb-2 hover:text-accent">
                 Contact
               </Link>
-              
+
               <div className="pt-2 flex flex-col gap-2">
                 <Link
                   to="/admissions"

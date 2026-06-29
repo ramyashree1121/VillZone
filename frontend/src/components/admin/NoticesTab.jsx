@@ -17,7 +17,7 @@ export default function NoticesTab({ token, showSuccess }) {
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/notices', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/notices`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -33,7 +33,7 @@ export default function NoticesTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/notices/${editId}` : '${import.meta.env.VITE_API_URL}/api/notices';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/notices/${editId}` : `${import.meta.env.VITE_API_URL}/api/notices`;
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, {

@@ -6,9 +6,7 @@ export default function DashboardTab({ stats, logs, setActiveTab }) {
     { title: 'Total Admissions', value: stats.admissions || 0, icon: GraduationCap, color: 'text-blue-500 bg-blue-50', tabId: 'admissions' },
     { title: 'New Enquiries', value: stats.leads || 0, icon: Users, color: 'text-amber-500 bg-amber-50', tabId: 'inquiries' },
     { title: 'Campus Visits', value: stats.campusVisits?.total || 0, icon: MapPin, color: 'text-indigo-500 bg-indigo-50', tabId: 'campus-visits' },
-    { title: 'Upcoming Events', value: stats.events || 0, icon: Calendar, color: 'text-emerald-500 bg-emerald-50', tabId: 'events' },
     { title: 'Gallery Photos', value: stats.gallery || 0, icon: Image, color: 'text-purple-500 bg-purple-50', tabId: 'gallery' },
-    { title: 'News & Alerts', value: stats.notices || 0, icon: FileText, color: 'text-rose-500 bg-rose-50', tabId: 'notices' },
   ];
 
   return (

@@ -14,7 +14,7 @@ export default function Calendar() {
   ];
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_API_URL}/api/events')
+    fetch(`${import.meta.env.VITE_API_URL}/api/events`)
       .then((res) => res.json())
       .then((data) => {
         if (data && data.length > 0) {
@@ -55,8 +55,8 @@ export default function Calendar() {
                 key={type}
                 onClick={() => setActiveFilter(type)}
                 className={`px-4.5 py-2 rounded-lg text-xs font-bold transition-all shadow-sm ${activeFilter === type
-                    ? 'bg-primary text-white'
-                    : 'bg-white text-slate-600 hover:bg-slate-100'
+                  ? 'bg-primary text-white'
+                  : 'bg-white text-slate-600 hover:bg-slate-100'
                   }`}
               >
                 {type}

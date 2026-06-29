@@ -9,7 +9,7 @@ export default function Faculty() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_API_URL}/api/faculty')
+    fetch(`${import.meta.env.VITE_API_URL}/api/faculty`)
       .then(res => res.json())
       .then(data => {
         setFacultyList(data);
@@ -104,9 +104,10 @@ export default function Faculty() {
                   {/* Portrait */}
                   <div className="relative h-64 overflow-hidden bg-slate-50">
                     <img
-                      src={fac.image}
+                      src={fac.image?.startsWith('http') ? fac.image : `${import.meta.env.VITE_API_URL}${fac.image}`}
                       alt={fac.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x400?text=Faculty'; }}
                     />
                     <div className="absolute top-3 right-3 bg-white/95 px-3 py-1 rounded-full text-[10px] font-bold text-primary shadow-sm uppercase">
                       {fac.dept}

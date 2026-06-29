@@ -7,7 +7,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { Notice, Event, Gallery, Settings, Lead, User, Admission, Testimonial, Staff, ActivityLog, Notification, PageSEO, CampusVisit, AILead, Syllabus, StudentLifeTopper, StudentLifeAchievement, StudentLifeGallery } from './models/Schemas.js';
+import { Notice, Event, Gallery, Settings, Lead, User, Admission, Testimonial, Staff, ActivityLog, Notification, PageSEO, CampusVisit, AILead, Syllabus, StudentLifeTopper, StudentLifeAchievement, StudentLifeGallery, CurriculumBoard, CurriculumFeature, CurriculumCategory, UniformGuideline, AwardHonor, Leadership } from './models/Schemas.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,7 +55,64 @@ const upload = multer({
 let isDbConnected = false;
 const memoryStorage = {
   users: [{ username: 'admin', password: 'admin123', role: 'Super Admin', name: 'School Administrator' }],
-  leads: [], notices: [], events: [], gallery: [], admissions: [], testimonials: [], staff: [], logs: [], notifications: [], pageSeo: [], campusVisits: [], aiLeads: [], studentLifeToppers: [], studentLifeAchievements: [], studentLifeGallery: [],
+  leads: [], 
+  notices: [
+    { _id: 'n_1', title: 'School Reopening Date Announced', content: 'The new academic session will commence from the first week of June. All parents are requested to ensure uniforms and books are procured beforehand.', date: new Date().toISOString(), category: 'General', isImportant: true, status: 'Published' },
+    { _id: 'n_2', title: 'Admissions Open for 2026-27', content: 'We are now accepting applications for Pre-KG to Grade 9. Limited seats available. Apply online or visit the campus.', date: new Date(Date.now() - 86400000).toISOString(), category: 'Admissions', isImportant: false, status: 'Published' }
+  ],
+  events: [
+    { _id: 'e_1', title: 'First Terminal Examinations', description: 'Term exams for Grades 1 to 12. Full syllabus coverage.', start: '2026-07-05', type: 'Exam', color: '#0A3D62' },
+    { _id: 'e_2', title: 'Annual Science Fair', description: 'Inter-school competition demonstrating student innovations and models.', start: '2026-07-15', type: 'Event', color: '#27AE60' },
+    { _id: 'e_3', title: 'Independence Day Celebrations', description: 'National Holiday and flag hosting assembly.', start: '2026-08-15', type: 'Holiday', color: '#F4B400' },
+    { _id: 'e_4', title: 'Parent-Teacher Meeting (Term 1)', description: 'One-on-one progress review for all grades.', start: '2026-07-28', type: 'Meeting', color: '#9B59B6' }
+  ],
+  gallery: [], admissions: [], testimonials: [], staff: [], logs: [], notifications: [], pageSeo: [], campusVisits: [], aiLeads: [], studentLifeToppers: [], studentLifeAchievements: [], studentLifeGallery: [],
+  uniforms: [], awards: [],
+  leadership: [
+    {
+      _id: 'l_1',
+      role: 'Correspondent',
+      name: 'Dr. Vikram A. Dev, Ph.D.',
+      qualification: 'M.Tech, Ph.D. (IIT Madras), Former Advisor to Education Board',
+      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+      message: 'Education is the most powerful tool to bridge societal divisions. At VillZone, our goal is to build an environment where students from every background gain absolute mastery in both sciences and life ethics. We ensure that our infrastructure matches international colleges, giving rural students equal chances at national ranks.',
+      email: 'correspondent@villzoneschool.edu.in',
+      displayOrder: 1,
+      status: 'Active'
+    },
+    {
+      _id: 'l_2',
+      role: 'Principal',
+      name: 'Mrs. Shalini R. Prasad, M.Ed.',
+      qualification: 'M.Sc., M.Ed., 18+ Years Administrative Experience in Top CBSE Schools',
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+      message: 'School is not just about writing exams; it is about exploring fields, finding talents, and cultivating self-discipline. Our CBSE and State Board courses are designed with active visual methods to prepare students for real-world application. My door is always open to parents who wish to collaborate on their child\'s developmental journey.',
+      email: 'principal@villzoneschool.edu.in',
+      displayOrder: 2,
+      status: 'Active'
+    }
+  ],
+  curriculumBoards: [
+    { _id: 'cb_1', title: 'CBSE', description: 'Central Board of Secondary Education', displayOrder: 1, status: 'Active' },
+    { _id: 'cb_2', title: 'State Board', description: 'Tamil Nadu State Board Curriculum', displayOrder: 2, status: 'Active' }
+  ],
+  curriculumFeatures: [
+    { _id: 'cf_1', title: 'Activity-Based Learning', description: '', displayOrder: 1, status: 'Active' },
+    { _id: 'cf_2', title: 'Experiential Learning', description: '', displayOrder: 2, status: 'Active' },
+    { _id: 'cf_3', title: 'Project-Based Learning', description: '', displayOrder: 3, status: 'Active' },
+    { _id: 'cf_4', title: 'Smart Classroom Learning', description: '', displayOrder: 4, status: 'Active' },
+    { _id: 'cf_5', title: 'Digital Learning Resources', description: '', displayOrder: 5, status: 'Active' },
+    { _id: 'cf_6', title: 'Collaborative Learning', description: '', displayOrder: 6, status: 'Active' },
+    { _id: 'cf_7', title: 'Continuous Assessment', description: '', displayOrder: 7, status: 'Active' },
+    { _id: 'cf_8', title: 'Value-Based Education', description: '', displayOrder: 8, status: 'Active' }
+  ],
+  curriculumCategories: [
+    { _id: 'cc_1', idName: 'Kindergarten', tabLabel: 'Kindergarten', tags: 'PRE-KG, LKG, UKG', title: 'Academic Objectives & Focus', description: 'Foundational literacy, motor skill cultivation, social values, and play-way interactive modules.', subjects: ['Phonics & English Reading', 'Basic Mathematics & Counting', 'EVS & Nature Studies', 'Storytelling, Music & Art', 'Fine Motor Activities'], displayOrder: 1, status: 'Active' },
+    { _id: 'cc_2', idName: 'Primary', tabLabel: 'Primary', tags: 'GRADES 1-5', title: 'Academic Objectives & Focus', description: 'Building strong foundations in literacy, numeracy, and environmental awareness while fostering creativity and critical thinking.', subjects: ['English Language Arts', 'Mathematics Foundation', 'Environmental Studies (EVS)', 'Basic Computer Science', 'Value Education', 'Physical Education'], displayOrder: 2, status: 'Active' },
+    { _id: 'cc_3', idName: 'Middle', tabLabel: 'Middle', tags: 'GRADES 6-8', title: 'Academic Objectives & Focus', description: 'Developing conceptual understanding, scientific inquiry, analytical skills, and holistic personal growth.', subjects: ['Languages (English, Regional)', 'Advanced Mathematics', 'Integrated Sciences', 'Social Sciences', 'Information Technology', 'Art & Physical Education'], displayOrder: 3, status: 'Active' },
+    { _id: 'cc_4', idName: 'HighSchool', tabLabel: 'HighSchool', tags: 'GRADES 9-10', title: 'Academic Objectives & Focus', description: 'Comprehensive preparation for board examinations with a focus on deep subject knowledge and career awareness.', subjects: ['English Language & Literature', 'Second Language Options', 'Mathematics', 'Science', 'Social Science', 'Artificial Intelligence / IT'], displayOrder: 4, status: 'Active' },
+    { _id: 'cc_5', idName: 'HigherSecondary', tabLabel: 'HigherSecondary', tags: 'GRADES 11-12', title: 'Academic Objectives & Focus', description: 'Specialized stream-based education preparing students for higher education and professional career pathways.', subjects: ['Science (Physics/Chem/Maths/Bio)', 'Commerce (Accounts/Business/Econ)', 'Humanities & Social Sciences', 'Computer Science', 'Core English', 'Skill Electives'], displayOrder: 5, status: 'Active' }
+  ],
   syllabus: [
     { _id: 'syl_1', title: 'CBSE Kindergarten Curriculum Guide', gradeLevel: 'Pre-KG', pdfUrl: '#', status: 'Published', fileSize: 1024000, createdAt: new Date() },
     { _id: 'syl_2', title: 'CBSE Primary Syllabus 2026-27', gradeLevel: 'Grade 1-5', pdfUrl: '#', status: 'Published', fileSize: 2500000, createdAt: new Date() },
@@ -92,6 +149,35 @@ const seedDatabase = async () => {
       if (!existingAdmin.name) existingAdmin.name = 'School Administrator';
       await existingAdmin.save();
       console.log('Admin password reset to admin123.');
+    }
+
+    // Seed Leadership
+    const leadershipCount = await Leadership.countDocuments();
+    if (leadershipCount === 0) {
+      const mockLeadership = [
+        {
+          role: 'Correspondent',
+          name: 'Dr. Vikram A. Dev, Ph.D.',
+          qualification: 'M.Tech, Ph.D. (IIT Madras), Former Advisor to Education Board',
+          image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+          message: 'Education is the most powerful tool to bridge societal divisions. At VillZone, our goal is to build an environment where students from every background gain absolute mastery in both sciences and life ethics. We ensure that our infrastructure matches international colleges, giving rural students equal chances at national ranks.',
+          email: 'correspondent@villzoneschool.edu.in',
+          displayOrder: 1,
+          status: 'Active'
+        },
+        {
+          role: 'Principal',
+          name: 'Mrs. Shalini R. Prasad, M.Ed.',
+          qualification: 'M.Sc., M.Ed., 18+ Years Administrative Experience in Top CBSE Schools',
+          image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
+          message: 'School is not just about writing exams; it is about exploring fields, finding talents, and cultivating self-discipline. Our CBSE and State Board courses are designed with active visual methods to prepare students for real-world application. My door is always open to parents who wish to collaborate on their child\'s developmental journey.',
+          email: 'principal@villzoneschool.edu.in',
+          displayOrder: 2,
+          status: 'Active'
+        }
+      ];
+      await Leadership.insertMany(mockLeadership);
+      console.log('Mock Leadership seeded.');
     }
 
     // Seed Gallery
@@ -165,6 +251,112 @@ const seedDatabase = async () => {
       });
       await Syllabus.insertMany(dbSyllabus);
       console.log('Mock syllabus seeded.');
+    }
+
+    // Seed Curriculum
+    const boardCount = await CurriculumBoard.countDocuments();
+    if (boardCount === 0) {
+      const mockBoards = [
+        { title: 'CBSE', description: 'Central Board of Secondary Education', displayOrder: 1 },
+        { title: 'State Board', description: 'Tamil Nadu State Board Curriculum', displayOrder: 2 }
+      ];
+      await CurriculumBoard.insertMany(mockBoards);
+    }
+    const featureCount = await CurriculumFeature.countDocuments();
+    if (featureCount === 0) {
+      const mockFeatures = [
+        { title: 'Activity-Based Learning', description: '', displayOrder: 1 },
+        { title: 'Experiential Learning', description: '', displayOrder: 2 },
+        { title: 'Project-Based Learning', description: '', displayOrder: 3 },
+        { title: 'Smart Classroom Learning', description: '', displayOrder: 4 },
+        { title: 'Digital Learning Resources', description: '', displayOrder: 5 },
+        { title: 'Collaborative Learning', description: '', displayOrder: 6 },
+        { title: 'Continuous Assessment', description: '', displayOrder: 7 },
+        { title: 'Value-Based Education', description: '', displayOrder: 8 }
+      ];
+      await CurriculumFeature.insertMany(mockFeatures);
+    }
+    const catCount = await CurriculumCategory.countDocuments();
+    if (catCount === 0) {
+      const mockCategories = [
+        { idName: 'Kindergarten', tabLabel: 'Kindergarten', tags: 'PRE-KG, LKG, UKG', title: 'Academic Objectives & Focus', description: 'Foundational literacy, motor skill cultivation, social values, and play-way interactive modules.', subjects: ['Phonics & English Reading', 'Basic Mathematics & Counting', 'EVS & Nature Studies', 'Storytelling, Music & Art', 'Fine Motor Activities'], displayOrder: 1 },
+        { idName: 'Primary', tabLabel: 'Primary', tags: 'GRADES 1-5', title: 'Academic Objectives & Focus', description: 'Building strong foundations in literacy, numeracy, and environmental awareness while fostering creativity and critical thinking.', subjects: ['English Language Arts', 'Mathematics Foundation', 'Environmental Studies (EVS)', 'Basic Computer Science', 'Value Education', 'Physical Education'], displayOrder: 2 },
+        { idName: 'Middle', tabLabel: 'Middle', tags: 'GRADES 6-8', title: 'Academic Objectives & Focus', description: 'Developing conceptual understanding, scientific inquiry, analytical skills, and holistic personal growth.', subjects: ['Languages (English, Regional)', 'Advanced Mathematics', 'Integrated Sciences', 'Social Sciences', 'Information Technology', 'Art & Physical Education'], displayOrder: 3 },
+        { idName: 'HighSchool', tabLabel: 'HighSchool', tags: 'GRADES 9-10', title: 'Academic Objectives & Focus', description: 'Comprehensive preparation for board examinations with a focus on deep subject knowledge and career awareness.', subjects: ['English Language & Literature', 'Second Language Options', 'Mathematics', 'Science', 'Social Science', 'Artificial Intelligence / IT'], displayOrder: 4 },
+        { idName: 'HigherSecondary', tabLabel: 'HigherSecondary', tags: 'GRADES 11-12', title: 'Academic Objectives & Focus', description: 'Specialized stream-based education preparing students for higher education and professional career pathways.', subjects: ['Science (Physics/Chem/Maths/Bio)', 'Commerce (Accounts/Business/Econ)', 'Humanities & Social Sciences', 'Computer Science', 'Core English', 'Skill Electives'], displayOrder: 5 }
+      ];
+      await CurriculumCategory.insertMany(mockCategories);
+      console.log('Mock curriculum seeded.');
+    }
+
+    // Seed Events
+    const eventCount = await Event.countDocuments();
+    if (eventCount === 0) {
+      const dbEvents = memoryStorage.events.map(e => {
+        const { _id, ...rest } = e;
+        return rest;
+      });
+      await Event.insertMany(dbEvents);
+      console.log('Mock events seeded.');
+    }
+
+    // Seed Student Life (Toppers & Achievements)
+    const topperCount = await StudentLifeTopper.countDocuments();
+    if (topperCount === 0) {
+      const mockToppers = [
+        { name: 'Abhinav R. Nair', grade: 'Grade 12 (CBSE Science)', score: '98.6%', imageUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200', displayOrder: 1 },
+        { name: 'Meera Deshmukh', grade: 'Grade 12 (State Commerce)', score: '99.0%', imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200', displayOrder: 2 },
+        { name: 'Sanjay Krishnan', grade: 'Grade 10 (CBSE)', score: '98.2%', imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', displayOrder: 3 }
+      ];
+      await StudentLifeTopper.insertMany(mockToppers);
+      console.log('Mock Toppers seeded.');
+    }
+    
+    const achievementCount = await StudentLifeAchievement.countDocuments();
+    if (achievementCount === 0) {
+      const mockAchievements = [
+        { badge: 'State Rank', title: 'Science Congress Winner', category: 'Academic', description: 'Our team designed a solar-powered crop-irrigation prototype that won 1st prize at the State Science Congress.', imageUrl: 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&q=80&w=600', displayOrder: 1 },
+        { badge: 'Zonal Gold', title: 'Athletics Under-17 Champions', category: 'Sports', description: 'Secure Gold and Silver medals in the Zonal High Jump and 400m relay sprints.', imageUrl: 'https://images.unsplash.com/photo-1552674605-171ff3ea36f0?auto=format&fit=crop&q=80&w=600', displayOrder: 2 },
+        { badge: 'National Rank', title: 'National Cyber Olympiad', category: 'Academic', description: 'Two students ranked in the Top 100 nationally in the cyber coding division.', imageUrl: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=600', displayOrder: 3 }
+      ];
+      await StudentLifeAchievement.insertMany(mockAchievements);
+      console.log('Mock Achievements seeded.');
+    }
+
+    // Seed Uniform Guidelines
+    const uniformCount = await UniformGuideline.countDocuments();
+    if (uniformCount === 0) {
+      const mockUniforms = [
+        { title: 'Regular Boys Uniform', description: 'Light blue pin-striped short-sleeve shirt, dark navy trousers/shorts, school belt, dark blue socks, and polished black shoes.', imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=400', displayOrder: 1 },
+        { title: 'Regular Girls Uniform', description: 'Light blue pin-striped shirt, navy pleated skirt / pinafore, navy blue cycling shorts, school belt, dark blue socks, and black shoes.', imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400', displayOrder: 2 },
+        { title: 'Sports House Uniform', description: 'Coloured breathable dry-fit T-shirt (Red, Blue, Green, or Gold house specific), white track pants, white socks, and white sports sneakers.', imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=400', displayOrder: 3 }
+      ];
+      await UniformGuideline.insertMany(mockUniforms);
+      console.log('Mock Uniforms seeded.');
+    }
+
+    // Seed Awards & Honours
+    const awardCount = await AwardHonor.countDocuments();
+    if (awardCount === 0) {
+      const mockAwards = [
+        { type: 'Institutional', title: 'Best Regional School Award (2024)', description: 'Conferred by the State Development Board for exceptional community educational services and digital penetration.', icon: 'Trophy', imageUrl: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&q=80&w=800', displayOrder: 1 },
+        { type: 'Academic', title: '100% CBSE Board Pass Merit', description: 'Sustained record of centum results and top marks in local CBSE district inspections.', icon: 'Award', imageUrl: 'https://images.unsplash.com/photo-1604574762244-7c179777d4ab?auto=format&fit=crop&q=80&w=800', displayOrder: 2 },
+        { type: 'Sports', title: 'Inter-District Football Shield (2025)', description: 'Champion trophies secured by our Senior boys team in the Under-19 category.', icon: 'Star', imageUrl: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&q=80&w=800', displayOrder: 3 },
+        { type: 'Certification', title: 'ISO 9001:2015 Safety Standard', description: 'Recognized for top structural safety, CCTV coverage standards, and hygienic water supply plants.', icon: 'ShieldCheck', imageUrl: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=800', displayOrder: 4 }
+      ];
+      await AwardHonor.insertMany(mockAwards);
+      console.log('Mock Awards seeded.');
+    }
+
+    // Seed Notices
+    const noticeCount = await Notice.countDocuments();
+    if (noticeCount === 0) {
+      const dbNotices = memoryStorage.notices.map(n => {
+        const { _id, ...rest } = n;
+        return rest;
+      });
+      await Notice.insertMany(dbNotices);
+      console.log('Mock notices seeded.');
     }
 
   } catch (err) {
@@ -493,7 +685,7 @@ app.post('/api/campus-visits', async (req, res) => {
     if (isDbConnected) {
       visit = await new CampusVisit(data).save();
     } else {
-      visit = { _id: Date.now().toString(), ...data, leadSource: 'Campus Visit Popup', status: 'New Lead', createdAt: new Date() };
+      visit = { _id: Date.now().toString(), ...data, leadSource: 'Campus Visit Popup', status: 'Pending', createdAt: new Date() };
       memoryStorage.campusVisits.unshift(visit);
     }
     await createNotification('New Campus Visit Lead', `Campus visit lead received from ${data.parentName} for ${new Date(data.visitDate).toLocaleDateString()}`, 'Admissions');
@@ -729,6 +921,63 @@ app.delete('/api/syllabus/:id', authenticateToken, async (req, res) => {
       await logActivity(req.user.username, 'Deleted a Syllabus', 'Syllabus', deleted.title);
     }
     res.json({ message: 'Syllabus deleted successfully' });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+// --- LEADERSHIP API --- 
+app.get('/api/leadership', async (req, res) => {
+  try {
+    if (isDbConnected) {
+      const data = await Leadership.find().sort({ displayOrder: 1, createdAt: -1 });
+      res.json(data);
+    } else {
+      res.json(memoryStorage.leadership || []);
+    }
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.post('/api/leadership', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) {
+      const newLeader = new Leadership(req.body);
+      const saved = await newLeader.save();
+      await logActivity(req.user.username, 'Added a Leadership Member', 'Leadership', req.body.name);
+      res.status(201).json(saved);
+    } else {
+      const newLeader = { _id: 'l_' + Date.now(), ...req.body, createdAt: new Date() };
+      memoryStorage.leadership.push(newLeader);
+      res.status(201).json(newLeader);
+    }
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/leadership/:id', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) {
+      const updated = await Leadership.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      await logActivity(req.user.username, 'Updated a Leadership Member', 'Leadership', req.body.name);
+      res.json(updated);
+    } else {
+      const idx = memoryStorage.leadership.findIndex(l => l._id === req.params.id);
+      if (idx > -1) {
+        memoryStorage.leadership[idx] = { ...memoryStorage.leadership[idx], ...req.body };
+        res.json(memoryStorage.leadership[idx]);
+      } else {
+        res.status(404).json({ message: 'Not found' });
+      }
+    }
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.delete('/api/leadership/:id', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) {
+      const deleted = await Leadership.findByIdAndDelete(req.params.id);
+      if (deleted) await logActivity(req.user.username, 'Deleted a Leadership Member', 'Leadership', deleted.name);
+      res.json({ message: 'Deleted successfully' });
+    } else {
+      memoryStorage.leadership = memoryStorage.leadership.filter(l => l._id !== req.params.id);
+      res.json({ message: 'Deleted successfully' });
+    }
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
@@ -1111,6 +1360,258 @@ app.delete('/api/student-life/gallery/:id', authenticateToken, async (req, res) 
       memoryStorage.studentLifeGallery = memoryStorage.studentLifeGallery.filter(t => t._id !== req.params.id);
     }
     await logActivity(req.user.username, 'Deleted a Gallery Item', 'Student Life');
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// --- UNIFORM GUIDELINES API ---
+app.get('/api/uniforms', async (req, res) => {
+  try {
+    const data = isDbConnected ? await UniformGuideline.find().sort({ displayOrder: 1, createdAt: -1 }) : memoryStorage.uniforms;
+    res.json(data);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.post('/api/uniforms', authenticateToken, upload.single('image'), async (req, res) => {
+  try {
+    const newData = {
+      ...req.body,
+      imageUrl: req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl
+    };
+    let savedData;
+    if (isDbConnected) {
+      savedData = await new UniformGuideline(newData).save();
+    } else {
+      savedData = { _id: Date.now().toString(), ...newData, createdAt: new Date() };
+      if(!memoryStorage.uniforms) memoryStorage.uniforms = [];
+      memoryStorage.uniforms.push(savedData);
+    }
+    await logActivity(req.user.username, 'Added a Uniform Guideline', 'Student Life');
+    res.json(savedData);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/uniforms/:id', authenticateToken, upload.single('image'), async (req, res) => {
+  try {
+    const updateData = { ...req.body, updatedAt: new Date() };
+    if (req.file) updateData.imageUrl = `/uploads/${req.file.filename}`;
+
+    if (isDbConnected) {
+      await UniformGuideline.findByIdAndUpdate(req.params.id, updateData);
+    } else {
+      const idx = memoryStorage.uniforms.findIndex(t => t._id === req.params.id);
+      if (idx !== -1) memoryStorage.uniforms[idx] = { ...memoryStorage.uniforms[idx], ...updateData };
+    }
+    await logActivity(req.user.username, 'Updated a Uniform Guideline', 'Student Life');
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.delete('/api/uniforms/:id', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) {
+      await UniformGuideline.findByIdAndDelete(req.params.id);
+    } else {
+      memoryStorage.uniforms = memoryStorage.uniforms.filter(t => t._id !== req.params.id);
+    }
+    await logActivity(req.user.username, 'Deleted a Uniform Guideline', 'Student Life');
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// --- AWARDS & HONOURS API ---
+app.get('/api/awards', async (req, res) => {
+  try {
+    const data = isDbConnected ? await AwardHonor.find().sort({ displayOrder: 1, createdAt: -1 }) : memoryStorage.awards;
+    res.json(data);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.post('/api/awards', authenticateToken, upload.single('image'), async (req, res) => {
+  try {
+    const newData = {
+      ...req.body,
+      imageUrl: req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl
+    };
+    let savedData;
+    if (isDbConnected) {
+      savedData = await new AwardHonor(newData).save();
+    } else {
+      savedData = { _id: Date.now().toString(), ...newData, createdAt: new Date() };
+      if(!memoryStorage.awards) memoryStorage.awards = [];
+      memoryStorage.awards.push(savedData);
+    }
+    await logActivity(req.user.username, 'Added an Award/Honour', 'Student Life');
+    res.json(savedData);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/awards/:id', authenticateToken, upload.single('image'), async (req, res) => {
+  try {
+    const updateData = { ...req.body, updatedAt: new Date() };
+    if (req.file) updateData.imageUrl = `/uploads/${req.file.filename}`;
+
+    if (isDbConnected) {
+      await AwardHonor.findByIdAndUpdate(req.params.id, updateData);
+    } else {
+      const idx = memoryStorage.awards.findIndex(t => t._id === req.params.id);
+      if (idx !== -1) memoryStorage.awards[idx] = { ...memoryStorage.awards[idx], ...updateData };
+    }
+    await logActivity(req.user.username, 'Updated an Award/Honour', 'Student Life');
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.delete('/api/awards/:id', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) {
+      await AwardHonor.findByIdAndDelete(req.params.id);
+    } else {
+      memoryStorage.awards = memoryStorage.awards.filter(t => t._id !== req.params.id);
+    }
+    await logActivity(req.user.username, 'Deleted an Award/Honour', 'Student Life');
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+// --- CURRICULUM API ---
+app.get('/api/curriculum-boards', async (req, res) => {
+  try {
+    if (isDbConnected) res.json(await CurriculumBoard.find().sort({ displayOrder: 1 }));
+    else res.json(memoryStorage.curriculumBoards);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.post('/api/curriculum-boards', authenticateToken, async (req, res) => {
+  try {
+    let saved;
+    if (isDbConnected) {
+      saved = await new CurriculumBoard(req.body).save();
+    } else {
+      saved = { _id: Date.now().toString(), ...req.body, createdAt: new Date() };
+      memoryStorage.curriculumBoards.push(saved);
+    }
+    await logActivity(req.user.username, 'Added Curriculum Board', 'Curriculum', req.body.title);
+    res.status(201).json(saved);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/curriculum-boards/:id', authenticateToken, async (req, res) => {
+  try {
+    let updated;
+    if (isDbConnected) {
+      updated = await CurriculumBoard.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    } else {
+      const idx = memoryStorage.curriculumBoards.findIndex(x => x._id === req.params.id);
+      if (idx > -1) {
+        memoryStorage.curriculumBoards[idx] = { ...memoryStorage.curriculumBoards[idx], ...req.body, updatedAt: new Date() };
+        updated = memoryStorage.curriculumBoards[idx];
+      }
+    }
+    await logActivity(req.user.username, 'Updated Curriculum Board', 'Curriculum', req.body.title);
+    res.json(updated);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.delete('/api/curriculum-boards/:id', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) await CurriculumBoard.findByIdAndDelete(req.params.id);
+    else memoryStorage.curriculumBoards = memoryStorage.curriculumBoards.filter(x => x._id !== req.params.id);
+    await logActivity(req.user.username, 'Deleted Curriculum Board', 'Curriculum');
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.get('/api/curriculum-features', async (req, res) => {
+  try {
+    if (isDbConnected) res.json(await CurriculumFeature.find().sort({ displayOrder: 1 }));
+    else res.json(memoryStorage.curriculumFeatures);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.post('/api/curriculum-features', authenticateToken, async (req, res) => {
+  try {
+    let saved;
+    if (isDbConnected) {
+      saved = await new CurriculumFeature(req.body).save();
+    } else {
+      saved = { _id: Date.now().toString(), ...req.body, createdAt: new Date() };
+      memoryStorage.curriculumFeatures.push(saved);
+    }
+    await logActivity(req.user.username, 'Added Curriculum Feature', 'Curriculum', req.body.title);
+    res.status(201).json(saved);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/curriculum-features/:id', authenticateToken, async (req, res) => {
+  try {
+    let updated;
+    if (isDbConnected) {
+      updated = await CurriculumFeature.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    } else {
+      const idx = memoryStorage.curriculumFeatures.findIndex(x => x._id === req.params.id);
+      if (idx > -1) {
+        memoryStorage.curriculumFeatures[idx] = { ...memoryStorage.curriculumFeatures[idx], ...req.body, updatedAt: new Date() };
+        updated = memoryStorage.curriculumFeatures[idx];
+      }
+    }
+    await logActivity(req.user.username, 'Updated Curriculum Feature', 'Curriculum', req.body.title);
+    res.json(updated);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.delete('/api/curriculum-features/:id', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) await CurriculumFeature.findByIdAndDelete(req.params.id);
+    else memoryStorage.curriculumFeatures = memoryStorage.curriculumFeatures.filter(x => x._id !== req.params.id);
+    await logActivity(req.user.username, 'Deleted Curriculum Feature', 'Curriculum');
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.get('/api/curriculum-categories', async (req, res) => {
+  try {
+    if (isDbConnected) res.json(await CurriculumCategory.find().sort({ displayOrder: 1 }));
+    else res.json(memoryStorage.curriculumCategories);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.post('/api/curriculum-categories', authenticateToken, async (req, res) => {
+  try {
+    let saved;
+    if (isDbConnected) {
+      saved = await new CurriculumCategory(req.body).save();
+    } else {
+      saved = { _id: Date.now().toString(), ...req.body, createdAt: new Date() };
+      memoryStorage.curriculumCategories.push(saved);
+    }
+    await logActivity(req.user.username, 'Added Curriculum Category', 'Curriculum', req.body.tabLabel);
+    res.status(201).json(saved);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.put('/api/curriculum-categories/:id', authenticateToken, async (req, res) => {
+  try {
+    let updated;
+    if (isDbConnected) {
+      updated = await CurriculumCategory.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    } else {
+      const idx = memoryStorage.curriculumCategories.findIndex(x => x._id === req.params.id);
+      if (idx > -1) {
+        memoryStorage.curriculumCategories[idx] = { ...memoryStorage.curriculumCategories[idx], ...req.body, updatedAt: new Date() };
+        updated = memoryStorage.curriculumCategories[idx];
+      }
+    }
+    await logActivity(req.user.username, 'Updated Curriculum Category', 'Curriculum', req.body.tabLabel);
+    res.json(updated);
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
+app.delete('/api/curriculum-categories/:id', authenticateToken, async (req, res) => {
+  try {
+    if (isDbConnected) await CurriculumCategory.findByIdAndDelete(req.params.id);
+    else memoryStorage.curriculumCategories = memoryStorage.curriculumCategories.filter(x => x._id !== req.params.id);
+    await logActivity(req.user.username, 'Deleted Curriculum Category', 'Curriculum');
     res.json({ success: true });
   } catch (err) { res.status(500).json({ message: err.message }); }
 });

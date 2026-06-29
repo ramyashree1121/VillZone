@@ -8,53 +8,35 @@ export default function StudentLife() {
   const [dynamicGallery, setDynamicGallery] = useState([]);
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_API_URL}/api/student-life/toppers')
+    fetch(`${import.meta.env.VITE_API_URL}/api/student-life/toppers`)
       .then(r => r.json())
       .then(d => setDynamicToppers(d.filter(x => x.status === 'Published')))
       .catch(e => console.error(e));
 
-    fetch('${import.meta.env.VITE_API_URL}/api/student-life/achievements')
+    fetch(`${import.meta.env.VITE_API_URL}/api/student-life/achievements`)
       .then(r => r.json())
       .then(d => setDynamicAchievements(d.filter(x => x.status === 'Published')))
       .catch(e => console.error(e));
 
-    fetch('${import.meta.env.VITE_API_URL}/api/student-life/gallery')
+    fetch(`${import.meta.env.VITE_API_URL}/api/student-life/gallery`)
       .then(r => r.json())
       .then(d => setDynamicGallery(d.filter(x => x.status === 'Published')))
       .catch(e => console.error(e));
   }, []);
 
-  const staticToppers = [
-    { name: 'Abhinav R. Nair', grade: 'Grade 12 (CBSE Science)', score: '98.6%', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' },
-    { name: 'Meera Deshmukh', grade: 'Grade 12 (State Commerce)', score: '99.0%', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200' },
-    { name: 'Sanjay Krishnan', grade: 'Grade 10 (CBSE)', score: '98.2%', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' }
-  ];
+  const allToppers = dynamicToppers.map(t => ({
+    name: t.name,
+    grade: t.grade,
+    score: t.score,
+    image: t.imageUrl?.startsWith('http') ? t.imageUrl : `${import.meta.env.VITE_API_URL}${t.imageUrl}`
+  }));
 
-  const staticAccomplishments = [
-    { badge: 'State Rank', title: 'Science Congress Winner', desc: 'Our team designed a solar-powered crop-irrigation prototype that won 1st prize at the State Science Congress.', image: 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&q=80&w=600' },
-    { badge: 'Zonal Gold', title: 'Athletics Under-17 Champions', desc: 'Secure Gold and Silver medals in the Zonal High Jump and 400m relay sprints.', image: 'https://images.unsplash.com/photo-1552674605-171ff3ea36f0?auto=format&fit=crop&q=80&w=600' },
-    { badge: 'National Rank', title: 'National Cyber Olympiad', desc: 'Two students ranked in the Top 100 nationally in the cyber coding division.', image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=600' }
-  ];
-
-  const allToppers = [
-    ...dynamicToppers.map(t => ({
-      name: t.name,
-      grade: t.grade,
-      score: t.score,
-      image: t.imageUrl ? `${import.meta.env.VITE_API_URL}${t.imageUrl}` : 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200'
-    })),
-    ...staticToppers
-  ];
-
-  const allAccomplishments = [
-    ...dynamicAchievements.map(a => ({
-      badge: a.badge || a.category,
-      title: a.title,
-      desc: a.description,
-      image: a.imageUrl ? `${import.meta.env.VITE_API_URL}${a.imageUrl}` : 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&q=80&w=600'
-    })),
-    ...staticAccomplishments
-  ];
+  const allAccomplishments = dynamicAchievements.map(a => ({
+    badge: a.badge || a.category,
+    title: a.title,
+    desc: a.description,
+    image: a.imageUrl?.startsWith('http') ? a.imageUrl : `${import.meta.env.VITE_API_URL}${a.imageUrl}`
+  }));
 
   return (
     <div className="pt-0 bg-slate-50 min-h-screen">
@@ -80,7 +62,7 @@ export default function StudentLife() {
             {allToppers.map((top, idx) => (
               <AnimatedSection key={idx} delay={idx * 0.1} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-premium text-center flex flex-col items-center group">
                 <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-slate-100 group-hover:border-secondary transition-colors duration-300">
-                  <img src={top.image} alt={top.name} className="w-full h-full object-cover" />
+                  <img src={top.image} alt={top.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200'; }} />
                 </div>
                 <h4 className="font-extrabold text-primary text-base leading-tight mb-1">{top.name}</h4>
                 <span className="text-xs text-slate-400 block mb-2">{top.grade}</span>
@@ -105,7 +87,7 @@ export default function StudentLife() {
             {allAccomplishments.map((acc, i) => (
               <AnimatedSection key={i} delay={i * 0.1} className="overflow-hidden rounded-2xl bg-white border border-slate-100 hover:shadow-premium transition-shadow duration-300 group flex flex-col">
                 <div className="relative h-48 overflow-hidden bg-slate-50">
-                  <img src={acc.image} alt={acc.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={acc.image} alt={acc.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&q=80&w=600'; }} />
                   <span className="absolute top-4 left-4 inline-block px-3 py-1 bg-accent/90 backdrop-blur-md text-accent-dark text-[10px] font-bold uppercase rounded-full shadow-sm">
                     {acc.badge}
                   </span>

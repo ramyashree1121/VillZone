@@ -51,25 +51,25 @@ export default function AIAssistant() {
 
   const processBotResponse = (text) => {
     setIsTyping(false);
-    
+
     // Use the knowledge base algorithm
     const match = findBestMatch(text);
 
     if (match) {
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        content: match.response, 
-        actionButton: match.actionButton 
+      setMessages(prev => [...prev, {
+        role: 'bot',
+        content: match.response,
+        actionButton: match.actionButton
       }]);
-      
+
       if (match.triggerLead) {
         setTimeout(() => setShowLeadForm(true), 500);
       }
     } else {
       // Fallback
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        content: "I'm sorry, I don't have the specific details for that right now. Our admissions team is highly knowledgeable and would be happy to assist you directly.\n\nPlease provide your details below and we will call you back!" 
+      setMessages(prev => [...prev, {
+        role: 'bot',
+        content: "I'm sorry, I don't have the specific details for that right now. Our admissions team is highly knowledgeable and would be happy to assist you directly.\n\nPlease provide your details below and we will call you back!"
       }]);
       setTimeout(() => setShowLeadForm(true), 500);
     }
@@ -77,10 +77,10 @@ export default function AIAssistant() {
 
   const handleLeadSubmit = async (e) => {
     e.preventDefault();
-    if(!leadForm.name || !leadForm.mobile || !leadForm.email) return;
+    if (!leadForm.name || !leadForm.mobile || !leadForm.email) return;
 
     try {
-      await fetch('http://localhost:5000/api/ai-leads', {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/ai-leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -101,7 +101,7 @@ export default function AIAssistant() {
   const renderMessageContent = (content) => {
     return content.split('\n').map((line, i) => {
       if (line === '') return <br key={i} />;
-      
+
       const parts = line.split(/(\*\*.*?\*\*)/g);
       return (
         <span key={i}>
@@ -136,7 +136,7 @@ export default function AIAssistant() {
       {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-[9999] w-[350px] sm:w-[400px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-fadeIn" style={{ maxHeight: '85vh' }}>
-          
+
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-primary-dark text-white p-4 flex justify-between items-center shadow-md z-10">
             <div className="flex items-center gap-3">
@@ -165,7 +165,7 @@ export default function AIAssistant() {
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-primary text-white rounded-br-none' : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none'}`}>
                   {renderMessageContent(msg.content)}
-                  
+
                   {/* Action Button if provided */}
                   {msg.actionButton && (
                     <div className="mt-3">
@@ -212,9 +212,9 @@ export default function AIAssistant() {
                 <h4 className="text-sm font-black text-slate-800 mb-1">Request a Callback</h4>
                 <p className="text-xs text-slate-500 mb-4">Please provide your details below.</p>
                 <form onSubmit={handleLeadSubmit} className="space-y-3">
-                  <input type="text" placeholder="Your Name" required className="w-full text-xs font-semibold p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" value={leadForm.name} onChange={(e) => setLeadForm({...leadForm, name: e.target.value})} />
-                  <input type="tel" placeholder="Mobile Number" required pattern="[0-9]{10}" className="w-full text-xs font-semibold p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" value={leadForm.mobile} onChange={(e) => setLeadForm({...leadForm, mobile: e.target.value})} />
-                  <input type="email" placeholder="Email Address" required className="w-full text-xs font-semibold p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" value={leadForm.email} onChange={(e) => setLeadForm({...leadForm, email: e.target.value})} />
+                  <input type="text" placeholder="Your Name" required className="w-full text-xs font-semibold p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" value={leadForm.name} onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })} />
+                  <input type="tel" placeholder="Mobile Number" required pattern="[0-9]{10}" className="w-full text-xs font-semibold p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" value={leadForm.mobile} onChange={(e) => setLeadForm({ ...leadForm, mobile: e.target.value })} />
+                  <input type="email" placeholder="Email Address" required className="w-full text-xs font-semibold p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" value={leadForm.email} onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })} />
                   <button type="submit" className="w-full bg-secondary hover:bg-secondary-dark text-white font-black tracking-wide text-xs py-3 rounded-xl transition-all shadow-md hover:shadow-lg">
                     Submit Details
                   </button>

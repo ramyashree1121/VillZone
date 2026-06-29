@@ -46,8 +46,13 @@ export default function Admission() {
   ];
 
   const tnDistricts = [
-    'Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli', 'Tirunelveli',
-    'Erode', 'Vellore', 'Ranipet', 'Kanchipuram', 'Tiruvannamalai', 'Dharmapuri'
+    'Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri',
+    'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanyakumari', 'Karur',
+    'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris',
+    'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivaganga',
+    'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli',
+    'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore',
+    'Viluppuram', 'Virudhunagar'
   ];
 
   const routes = ['Route 1 (Vellore bypass)', 'Route 2 (Tiruvannamalai Town)', 'Route 3 (Chengam Bypass)', 'Route 4 (Polur Ring Road)'];
@@ -68,51 +73,116 @@ export default function Admission() {
     const pinRegex = /^\d{6}$/;
     const aadhaarRegex = /^\d{12}$/;
 
+    const expectedAgeForGrade = {
+      'Pre-KG': 2, 'LKG': 3, 'UKG': 4,
+      'Grade 1': 5, 'Grade 2': 6, 'Grade 3': 7, 'Grade 4': 8, 'Grade 5': 9,
+      'Grade 6': 10, 'Grade 7': 11, 'Grade 8': 12, 'Grade 9': 13, 'Grade 10': 14,
+      'Grade 11': 15, 'Grade 12': 16
+    };
+
+    const validateAgeForGrade = (dob, grade) => {
+      if (!dob || !grade) return null;
+      const birthDate = new Date(dob);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (birthDate >= today) return 'Date of Birth cannot be today or in the future.';
+      
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      if (age < 2) return 'Student must be at least 2 years old to apply.';
+
+      const expectedAge = expectedAgeForGrade[grade];
+      // Allow 2 years younger, and 4 years older
+      const minAllowed = Math.max(2, expectedAge - 2);
+      const maxAllowed = expectedAge + 4;
+
+      if (age < minAllowed) return `Student is ${age} yrs old, which is too young for ${grade}.`;
+      if (age > maxAllowed) return `Student is ${age} yrs old, which is too old for ${grade}.`;
+      
+      return null;
+    };
+
     switch (name) {
       case 'studentName':
         if (!value) return 'Student name is required.';
+        if (value.length < 3) return 'Name must be at least 3 characters long.';
         if (!nameRegex.test(value)) return 'Name must contain only letters.';
         break;
       case 'dateOfBirth':
         if (!value) return 'Date of Birth is required.';
+        if (formData.classApplyingFor) {
+          const ageErr = validateAgeForGrade(value, formData.classApplyingFor);
+          if (ageErr) return ageErr;
+        } else {
+          // Just run the basic checks if grade isn't selected yet
+          const dob = new Date(value);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (dob >= today) return 'Date of Birth cannot be today or in the future.';
+          const age = today.getFullYear() - dob.getFullYear();
+          if (age < 2) return 'Student must be at least 2 years old to apply.';
+        }
         break;
       case 'gender':
         if (!value) return 'Gender selection is required.';
         break;
       case 'classApplyingFor':
         if (!value) return 'Please select the grade you are applying for.';
+        if (formData.dateOfBirth) {
+          const ageErr = validateAgeForGrade(formData.dateOfBirth, value);
+          if (ageErr) return ageErr;
+        }
         break;
       case 'aadhaarNumber':
         if (value && !aadhaarRegex.test(value)) return 'Aadhaar must be 12 digits.';
         break;
       case 'fatherName':
         if (!value) return "Father's name is required.";
+        if (value.length < 3) return "Father's name must be at least 3 characters.";
         if (!nameRegex.test(value)) return 'Father name must contain only letters.';
+        if (formData.motherName && value.toLowerCase().trim() === formData.motherName.toLowerCase().trim()) return "Father's name cannot be the same as Mother's name.";
         break;
       case 'motherName':
         if (!value) return "Mother's name is required.";
+        if (value.length < 3) return "Mother's name must be at least 3 characters.";
         if (!nameRegex.test(value)) return 'Mother name must contain only letters.';
+        if (formData.fatherName && value.toLowerCase().trim() === formData.fatherName.toLowerCase().trim()) return "Mother's name cannot be the same as Father's name.";
         break;
       case 'fatherMobile':
         if (!value) return 'Father mobile number is required.';
         if (!mobileRegex.test(value)) return 'Mobile must be a valid 10-digit number.';
         break;
       case 'fatherEmail':
-        if (!value) return 'Father email is required.';
-        if (!emailRegex.test(value)) return 'Please enter a valid email.';
+        if (value) {
+          if (!emailRegex.test(value)) return 'Please enter a valid email.';
+          if (/^\d+@/.test(value)) return 'Email username cannot be only numbers.';
+        }
         break;
       case 'addressLine1':
         if (!value) return 'Address Line 1 is required.';
         break;
       case 'city':
         if (!value) return 'City/Town is required.';
+        if (value.length < 3) return 'City must be at least 3 characters long.';
+        if (!nameRegex.test(value)) return 'City must contain only letters.';
         break;
       case 'district':
         if (!value) return 'District is required.';
+        if (formData.addressLine1 && !formData.addressLine1.toLowerCase().includes(value.toLowerCase()) && (!formData.city || formData.city.toLowerCase() !== value.toLowerCase())) {
+          return 'District must match the location provided in your address or city.';
+        }
         break;
       case 'pincode':
         if (!value) return 'Pincode is required.';
-        if (!pinRegex.test(value)) return 'Pincode must be exactly 6 digits.';
+        if (!/^[6]\d{5}$/.test(value)) return 'Please enter a valid Tamil Nadu pincode (starting with 6).';
+        if (formData.addressLine1 && !formData.addressLine1.includes(value)) {
+          return 'Pincode must match the one provided in your address.';
+        }
         break;
       case 'previousBoard':
         if (!value) return 'Previous Board is required.';
@@ -180,9 +250,7 @@ export default function Admission() {
     if (activeStep === 3) fields = ['addressLine1', 'city', 'district', 'pincode'];
     if (activeStep === 4) fields = ['previousBoard'];
     if (activeStep === 5) {
-      if (!formData.studentPhoto) stepErrors.studentPhoto = 'Student photo is required.';
-      if (!formData.birthCertificate) stepErrors.birthCertificate = 'Birth certificate is required.';
-      if (!formData.aadhaarCard) stepErrors.aadhaarCard = 'Aadhaar card is required.';
+      // Documents are now optional
     }
 
     fields.forEach(f => {
@@ -213,6 +281,17 @@ export default function Admission() {
   const handleFileChange = (e, field) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Prevent uploading the exact same file for multiple documents
+    const docFields = ['studentPhoto', 'birthCertificate', 'aadhaarCard'];
+    const isDuplicate = docFields.some(f => f !== field && formData[f] === file.name);
+    
+    if (isDuplicate) {
+      alert('You have already uploaded a file with this name for another document. Please upload a different file.');
+      e.target.value = ''; // Reset the input
+      return;
+    }
+
     setUploadProgress(prev => ({ ...prev, [field]: 10 }));
     let prog = 10;
     const interval = setInterval(() => {
@@ -239,7 +318,7 @@ export default function Admission() {
 
     setStatus({ loading: true, success: false, error: '', appNumber: '' });
     try {
-      const response = await fetch('${import.meta.env.VITE_API_URL}/api/admissions', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admissions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -406,18 +485,36 @@ export default function Admission() {
                 </div>
                 {/* visual pipeline status check */}
                 <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-1 before:bottom-1 before:w-[2px] before:bg-slate-100">
-                  {['Applied', 'Verified', 'Interview Scheduled', 'Approved', 'Enrolled'].map((stepVal, stepIdx) => {
-                    const trackingIdx = ['Applied', 'Verified', 'Interview Scheduled', 'Approved', 'Enrolled'].indexOf(trackedApplication.status);
-                    const completed = stepIdx <= trackingIdx;
-                    return (
-                      <div key={stepVal} className="relative flex items-center gap-3">
-                        <div className={`absolute -left-6 w-4 h-4 rounded-full border flex items-center justify-center text-[8px] font-bold ${completed ? 'bg-secondary border-secondary text-white' : 'bg-white border-slate-200 text-slate-400'}`}>
-                          {completed ? '✓' : stepIdx + 1}
+                  {(() => {
+                    const status = trackedApplication.status;
+                    let trackingIdx = 0; // "Applied" is default completed
+                    if (['Under Review', 'Contacted', 'Documents Pending', 'Rejected'].includes(status)) trackingIdx = 1; // "Verified" completed
+                    if (['Approved', 'Confirmed'].includes(status)) trackingIdx = 2; // "Confirmed" completed
+                    
+                    return ['Applied', 'Verified', 'Confirmed'].map((stepVal, stepIdx) => {
+                      let completed = stepIdx <= trackingIdx;
+                      let isRejected = status === 'Rejected' && stepIdx === 2; // For step 3 if rejected
+
+                      return (
+                        <div key={stepVal} className="relative flex items-center gap-3">
+                          <div className={`absolute -left-6 w-4 h-4 rounded-full border flex items-center justify-center text-[8px] font-bold transition-colors ${
+                            isRejected ? 'bg-rose-500 border-rose-500 text-white' :
+                            completed ? 'bg-emerald-500 border-emerald-500 text-white' : 
+                            'bg-white border-slate-200 text-slate-400'
+                          }`}>
+                            {isRejected ? '✕' : (completed ? '✓' : stepIdx + 1)}
+                          </div>
+                          <span className={`text-[11px] font-bold ${
+                            isRejected ? 'text-rose-500' : 
+                            completed ? 'text-emerald-600' : 
+                            'text-slate-400'
+                          }`}>
+                            {isRejected ? 'Rejected' : stepVal}
+                          </span>
                         </div>
-                        <span className={`text-[11px] font-bold ${completed ? 'text-slate-800' : 'text-slate-400'}`}>{stepVal}</span>
-                      </div>
-                    );
-                  })}
+                      );
+                    });
+                  })()}
                 </div>
               </div>
             )}
@@ -636,11 +733,10 @@ export default function Admission() {
                           {errors.fatherMobile && <span className="text-[9px] text-rose-500 block mt-1">{errors.fatherMobile}</span>}
                         </div>
                         <div>
-                          <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Father Email *</label>
+                          <label className="block text-[10px] text-slate-400 uppercase tracking-widest mb-1.5">Father Email</label>
                           <input
                             type="email"
                             name="fatherEmail"
-                            required
                             value={formData.fatherEmail}
                             onChange={(e) => setFormData({ ...formData, fatherEmail: e.target.value })}
                             onKeyDown={handleKeyDown}
@@ -774,9 +870,9 @@ export default function Admission() {
                       <h3 className="text-sm font-black text-[#0F4C81] uppercase tracking-wider border-b pb-1">5. Document Uploads</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {[
-                          { key: 'studentPhoto', label: 'Passport Photo *' },
-                          { key: 'birthCertificate', label: 'Birth Certificate *' },
-                          { key: 'aadhaarCard', label: 'Aadhaar Card *' }
+                          { key: 'studentPhoto', label: 'Passport Photo' },
+                          { key: 'birthCertificate', label: 'Birth Certificate' },
+                          { key: 'aadhaarCard', label: 'Aadhaar Card' }
                         ].map((doc) => (
                           <div key={doc.key} className="bg-slate-50 p-4 border rounded-2xl flex flex-col justify-between">
                             <span className="block font-bold text-xs text-slate-800 mb-1">{doc.label}</span>

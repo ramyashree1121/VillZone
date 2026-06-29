@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Award, Trophy, ShieldCheck, Star } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 
+const IconMap = {
+  Trophy,
+  Award,
+  Star,
+  ShieldCheck
+};
+
 export default function Awards() {
-  const awards = [
-    { type: 'Institutional', title: 'Best Regional School Award (2024)', desc: 'Conferred by the State Development Board for exceptional community educational services and digital penetration.', icon: Trophy, imageUrl: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&q=80&w=800' },
-    { type: 'Academic', title: '100% CBSE Board Pass Merit', desc: 'Sustained record of centum results and top marks in local CBSE district inspections.', icon: Award, imageUrl: 'https://images.unsplash.com/photo-1604574762244-7c179777d4ab?auto=format&fit=crop&q=80&w=800' },
-    { type: 'Sports', title: 'Inter-District Football Shield (2025)', desc: 'Champion trophies secured by our Senior boys team in the Under-19 category.', icon: Star, imageUrl: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&q=80&w=800' },
-    { type: 'Certification', title: 'ISO 9001:2015 Safety Standard', desc: 'Recognized for top structural safety, CCTV coverage standards, and hygienic water supply plants.', icon: ShieldCheck, imageUrl: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=800' },
-    { type: 'Cultural', title: 'State-Level Youth Festival Winner (2025)', desc: 'First prize in group dance and second in solo singing at the Tamil Nadu State Youth Festival.', icon: Trophy, imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800' },
-    { type: 'Academic', title: 'National Science Olympiad Gold', desc: 'Three students secured Gold medals in the National Science Olympiad with all-India rankings.', icon: Award, imageUrl: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=800' },
-    { type: 'Sports', title: 'District Athletics Championship', desc: 'Overall champions with 12 Gold, 8 Silver medals in U-14 and U-17 categories.', icon: Star, imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800' },
-    { type: 'Institutional', title: 'Green School Certification (2025)', desc: 'Awarded by the Environmental Protection Board for sustainable campus practices and tree plantation drives.', icon: ShieldCheck, imageUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=800' }
-  ];
+  const [awards, setAwards] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/awards`)
+      .then(res => res.json())
+      .then(data => {
+        setAwards(data.filter(a => a.status === 'Published'));
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching awards:", err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="pt-0 bg-slate-50 min-h-screen">
@@ -29,37 +41,46 @@ export default function Awards() {
       {/* Showcase Grid */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {awards.map((aw, idx) => {
-              const Icon = aw.icon;
-              return (
-                <AnimatedSection key={idx} delay={idx * 0.05} className="bg-white rounded-2xl border border-slate-100 shadow-premium overflow-hidden hover:shadow-premium-hover hover:-translate-y-1 transition-all duration-300">
-                  <div className="relative h-52 overflow-hidden bg-slate-100">
-                    {aw.imageUrl && (
-                      <img
-                        src={aw.imageUrl}
-                        alt={aw.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                        <Icon size={20} className="text-white" />
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+            </div>
+          ) : awards.length === 0 ? (
+            <div className="text-center text-slate-500 py-12">No awards available at the moment.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {awards.map((aw, idx) => {
+                const Icon = IconMap[aw.icon] || Trophy;
+                return (
+                  <AnimatedSection key={idx} delay={idx * 0.05} className="bg-white rounded-2xl border border-slate-100 shadow-premium overflow-hidden hover:shadow-premium-hover hover:-translate-y-1 transition-all duration-300">
+                    <div className="relative h-52 overflow-hidden bg-slate-100">
+                      {aw.imageUrl && (
+                        <img
+                          src={aw.imageUrl?.startsWith('http') ? aw.imageUrl : `${import.meta.env.VITE_API_URL}${aw.imageUrl}`}
+                          alt={aw.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&q=80&w=800'; }}
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                        <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                          <Icon size={20} className="text-white" />
+                        </div>
+                        <span className="text-[10px] font-extrabold uppercase text-white tracking-widest bg-white/20 backdrop-blur-md px-2 py-1 rounded-md">
+                          {aw.type}
+                        </span>
                       </div>
-                      <span className="text-[10px] font-extrabold uppercase text-white tracking-widest bg-white/20 backdrop-blur-md px-2 py-1 rounded-md">
-                        {aw.type}
-                      </span>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-extrabold text-primary text-lg mb-2">{aw.title}</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">{aw.desc}</p>
-                  </div>
-                </AnimatedSection>
-              );
-            })}
-          </div>
+                    <div className="p-6">
+                      <h3 className="font-extrabold text-primary text-lg mb-2">{aw.title}</h3>
+                      <p className="text-slate-600 text-sm leading-relaxed">{aw.description}</p>
+                    </div>
+                  </AnimatedSection>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

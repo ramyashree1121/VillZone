@@ -1,15 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Check, Archive, Trash2, Search, Eye, X } from 'lucide-react';
+import { Mail, Check, Archive, Trash2, Search, Eye, X, Phone } from 'lucide-react';
 
 export default function EnquiriesTab({ token, showSuccess }) {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLead, setSelectedLead] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedIds(filteredLeads.map(l => l._id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelect = (id) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const handleBulkUpdate = async (status) => {
+    if (!window.confirm(`Are you sure you want to mark ${selectedIds.length} enquiries as ${status}?`)) return;
+    try {
+      setLoading(true);
+      await Promise.all(selectedIds.map(id =>
+        fetch(`${import.meta.env.VITE_API_URL}/api/leads/${id}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ status })
+        })
+      ));
+      showSuccess(`Successfully marked ${selectedIds.length} enquiries as ${status}`);
+      setSelectedIds([]);
+      fetchLeads();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update some enquiries.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchLeads = async () => {
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/leads', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/leads`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -72,15 +107,30 @@ export default function EnquiriesTab({ token, showSuccess }) {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden flex flex-col h-[calc(100vh-200px)]">
-        <div className="p-4 border-b border-[#E2E8F0] bg-slate-50 relative">
-          <Search className="absolute left-7 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          <input
-            type="text"
-            placeholder="Search by name, email or subject..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-md pl-10 pr-4 py-2 border rounded-xl text-sm outline-none focus:border-primary"
-          />
+        <div className="p-4 border-b border-[#E2E8F0] bg-slate-50 flex flex-wrap gap-4 items-center justify-between">
+          <div className="flex items-center gap-4 flex-1">
+            <input type="checkbox" onChange={handleSelectAll} checked={filteredLeads.length > 0 && selectedIds.length === filteredLeads.length} className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"/>
+            <div className="relative max-w-sm w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+              <input
+                type="text"
+                placeholder="Search by name, email or subject..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {selectedIds.length > 0 && (
+              <div className="flex items-center gap-2 bg-slate-200 px-3 py-1.5 rounded-xl text-sm font-bold shadow-inner">
+                <span className="text-slate-600 mr-2">{selectedIds.length} selected:</span>
+                <button onClick={() => handleBulkUpdate('New')} className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm text-xs">New</button>
+                <button onClick={() => handleBulkUpdate('Read')} className="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-sm text-xs">Read</button>
+                <button onClick={() => handleBulkUpdate('Archived')} className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-lg shadow-sm text-xs">Archive</button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
@@ -95,13 +145,16 @@ export default function EnquiriesTab({ token, showSuccess }) {
                   key={lead._id}
                   className={`p-4 flex gap-4 hover:bg-slate-50 transition-colors ${lead.status === 'New' ? 'bg-blue-50/50' : ''}`}
                 >
+                  <div className="pt-2">
+                    <input type="checkbox" checked={selectedIds.includes(lead._id)} onChange={() => handleSelect(lead._id)} className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"/>
+                  </div>
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${lead.status === 'New' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-400'}`}>
                     <Mail size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-1">
                       <h4 className={`text-sm truncate pr-4 ${lead.status === 'New' ? 'font-black text-slate-800' : 'font-bold text-slate-600'}`}>
-                        {lead.parentName} <span className="font-normal text-xs text-slate-400">({lead.email})</span>
+                        {lead.parentName} <span className="font-normal text-xs text-slate-400 hidden sm:inline">({lead.email} | {lead.phoneNumber})</span>
                       </h4>
                       <span className="text-[10px] font-bold text-slate-400 whitespace-nowrap">
                         {new Date(lead.createdAt).toLocaleDateString()}
@@ -112,13 +165,19 @@ export default function EnquiriesTab({ token, showSuccess }) {
                     </p>
                     <p className="text-xs text-slate-400 truncate">{lead.message}</p>
 
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex flex-wrap gap-2 mt-3">
                       <button
                         onClick={() => setSelectedLead(lead)}
-                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200"
+                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 flex items-center gap-1"
                       >
-                        Read Full Message
+                        <Eye size={12} /> Read Message
                       </button>
+                      <a
+                        href={`tel:${lead.phoneNumber}`}
+                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 flex items-center gap-1"
+                      >
+                        <Phone size={12} /> Call
+                      </a>
                       {lead.status === 'New' && (
                         <button
                           onClick={() => updateLeadStatus(lead._id, 'Read')}

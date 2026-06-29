@@ -5,10 +5,11 @@ export default function StudentLifeTab({ token, showSuccess }) {
   const [activeSubTab, setActiveSubTab] = useState('toppers'); // 'toppers', 'achievements', 'gallery'
   const [isLoading, setIsLoading] = useState(false);
 
-  // Data
   const [toppers, setToppers] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [gallery, setGallery] = useState([]);
+  const [uniforms, setUniforms] = useState([]);
+  const [awards, setAwards] = useState([]);
 
   // Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -28,13 +29,17 @@ export default function StudentLifeTab({ token, showSuccess }) {
       const endpoint =
         activeSubTab === 'toppers' ? '/api/student-life/toppers' :
           activeSubTab === 'achievements' ? '/api/student-life/achievements' :
-            '/api/student-life/gallery';
+            activeSubTab === 'uniforms' ? '/api/uniforms' :
+              activeSubTab === 'awards' ? '/api/awards' :
+                '/api/student-life/gallery';
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`);
       if (res.ok) {
         const data = await res.json();
         if (activeSubTab === 'toppers') setToppers(data);
         else if (activeSubTab === 'achievements') setAchievements(data);
+        else if (activeSubTab === 'uniforms') setUniforms(data);
+        else if (activeSubTab === 'awards') setAwards(data);
         else setGallery(data);
       }
     } catch (err) {
@@ -54,6 +59,10 @@ export default function StudentLifeTab({ token, showSuccess }) {
       setFormData({ name: '', grade: '', score: '', academicYear: '', achievementDesc: '', displayOrder: 0, status: 'Published' });
     } else if (activeSubTab === 'achievements') {
       setFormData({ title: '', studentName: '', category: 'Academic', description: '', badge: '', displayOrder: 0, status: 'Published' });
+    } else if (activeSubTab === 'uniforms') {
+      setFormData({ title: '', description: '', displayOrder: 0, status: 'Published' });
+    } else if (activeSubTab === 'awards') {
+      setFormData({ type: 'Academic', title: '', description: '', icon: 'Trophy', displayOrder: 0, status: 'Published' });
     } else {
       setFormData({ title: '', description: '', category: 'Classroom Activities', eventName: '', mediaType: 'image', displayOrder: 0, status: 'Published' });
     }
@@ -78,7 +87,9 @@ export default function StudentLifeTab({ token, showSuccess }) {
     const endpoint =
       activeSubTab === 'toppers' ? `/api/student-life/toppers/${id}` :
         activeSubTab === 'achievements' ? `/api/student-life/achievements/${id}` :
-          `/api/student-life/gallery/${id}`;
+          activeSubTab === 'uniforms' ? `/api/uniforms/${id}` :
+            activeSubTab === 'awards' ? `/api/awards/${id}` :
+              `/api/student-life/gallery/${id}`;
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
@@ -107,7 +118,9 @@ export default function StudentLifeTab({ token, showSuccess }) {
     const endpoint =
       activeSubTab === 'toppers' ? `/api/student-life/toppers` :
         activeSubTab === 'achievements' ? `/api/student-life/achievements` :
-          `/api/student-life/gallery`;
+          activeSubTab === 'uniforms' ? `/api/uniforms` :
+            activeSubTab === 'awards' ? `/api/awards` :
+              `/api/student-life/gallery`;
 
     const url = isEditing ? `${import.meta.env.VITE_API_URL}${endpoint}/${editId}` : `${import.meta.env.VITE_API_URL}${endpoint}`;
     const method = isEditing ? 'PUT' : 'POST';
@@ -144,16 +157,18 @@ export default function StudentLifeTab({ token, showSuccess }) {
       </div>
 
       {/* Sub Tabs */}
-      <div className="flex border-b border-slate-200">
-        <button onClick={() => { setActiveSubTab('toppers'); setIsFormOpen(false); }} className={`px-6 py-3 text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'toppers' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Toppers</button>
-        <button onClick={() => { setActiveSubTab('achievements'); setIsFormOpen(false); }} className={`px-6 py-3 text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'achievements' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Achievements</button>
-        <button onClick={() => { setActiveSubTab('gallery'); setIsFormOpen(false); }} className={`px-6 py-3 text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'gallery' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Gallery</button>
+      <div className="flex border-b border-slate-200 overflow-x-auto hide-scrollbar">
+        <button onClick={() => { setActiveSubTab('toppers'); setIsFormOpen(false); }} className={`px-4 py-3 whitespace-nowrap text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'toppers' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Toppers</button>
+        <button onClick={() => { setActiveSubTab('achievements'); setIsFormOpen(false); }} className={`px-4 py-3 whitespace-nowrap text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'achievements' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Achievements</button>
+        <button onClick={() => { setActiveSubTab('gallery'); setIsFormOpen(false); }} className={`px-4 py-3 whitespace-nowrap text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'gallery' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Gallery</button>
+        <button onClick={() => { setActiveSubTab('uniforms'); setIsFormOpen(false); }} className={`px-4 py-3 whitespace-nowrap text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'uniforms' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Uniform Guidelines</button>
+        <button onClick={() => { setActiveSubTab('awards'); setIsFormOpen(false); }} className={`px-4 py-3 whitespace-nowrap text-sm font-bold border-b-2 transition-colors ${activeSubTab === 'awards' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>Awards & Honours</button>
       </div>
 
       {isFormOpen ? (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 animate-fadeIn">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-slate-800">{isEditing ? 'Edit' : 'Add New'} {activeSubTab === 'toppers' ? 'Topper' : activeSubTab === 'achievements' ? 'Achievement' : 'Gallery Item'}</h3>
+            <h3 className="text-lg font-bold text-slate-800">{isEditing ? 'Edit' : 'Add New'} {activeSubTab === 'toppers' ? 'Topper' : activeSubTab === 'achievements' ? 'Achievement' : activeSubTab === 'uniforms' ? 'Uniform' : activeSubTab === 'awards' ? 'Award' : 'Gallery Item'}</h3>
             <button onClick={resetForm} className="text-slate-400 hover:text-slate-600"><XCircle size={24} /></button>
           </div>
 
@@ -189,6 +204,32 @@ export default function StudentLifeTab({ token, showSuccess }) {
                     </select>
                   </div>
                   <div><label className="block text-sm font-bold mb-2">Badge Text</label><input value={formData.badge || ''} onChange={e => setFormData({ ...formData, badge: e.target.value })} className="w-full border p-2 rounded-xl" placeholder="e.g. State Rank" /></div>
+                </>
+              )}
+
+              {/* UNIFORMS FORM */}
+              {activeSubTab === 'uniforms' && (
+                <>
+                  <div><label className="block text-sm font-bold mb-2">Uniform Title</label><input required value={formData.title || ''} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full border p-2 rounded-xl" placeholder="e.g. Regular Boys Uniform" /></div>
+                </>
+              )}
+
+              {/* AWARDS FORM */}
+              {activeSubTab === 'awards' && (
+                <>
+                  <div><label className="block text-sm font-bold mb-2">Award Title</label><input required value={formData.title || ''} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full border p-2 rounded-xl" placeholder="e.g. Best Regional School Award" /></div>
+                  <div>
+                    <label className="block text-sm font-bold mb-2">Award Type</label>
+                    <select value={formData.type || 'Academic'} onChange={e => setFormData({ ...formData, type: e.target.value })} className="w-full border p-2 rounded-xl">
+                      <option>Academic</option><option>Sports</option><option>Cultural</option><option>Institutional</option><option>Certification</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold mb-2">Icon Name</label>
+                    <select value={formData.icon || 'Trophy'} onChange={e => setFormData({ ...formData, icon: e.target.value })} className="w-full border p-2 rounded-xl">
+                      <option value="Trophy">Trophy</option><option value="Award">Award</option><option value="Star">Star</option><option value="ShieldCheck">ShieldCheck</option>
+                    </select>
+                  </div>
                 </>
               )}
 
@@ -255,16 +296,21 @@ export default function StudentLifeTab({ token, showSuccess }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {(activeSubTab === 'toppers' ? toppers : activeSubTab === 'achievements' ? achievements : gallery).length === 0 ? (
+                  {(activeSubTab === 'toppers' ? toppers : activeSubTab === 'achievements' ? achievements : activeSubTab === 'uniforms' ? uniforms : activeSubTab === 'awards' ? awards : gallery).length === 0 ? (
                     <tr><td colSpan="5" className="p-8 text-center text-slate-500">No records found. Add one above.</td></tr>
                   ) : (
-                    (activeSubTab === 'toppers' ? toppers : activeSubTab === 'achievements' ? achievements : gallery).map((item) => (
+                    (activeSubTab === 'toppers' ? toppers : activeSubTab === 'achievements' ? achievements : activeSubTab === 'uniforms' ? uniforms : activeSubTab === 'awards' ? awards : gallery).map((item) => (
                       <tr key={item._id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                         <td className="p-4">
                           {item.mediaType === 'video' ? (
                             <div className="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center text-slate-400"><FileVideo size={24} /></div>
                           ) : item.imageUrl || item.mediaUrl ? (
-                            <img src={`${import.meta.env.VITE_API_URL}${item.imageUrl || item.mediaUrl}`} className="w-16 h-16 object-cover rounded-lg shadow-sm" alt="Thumbnail" />
+                            <img 
+                              src={(item.imageUrl || item.mediaUrl)?.startsWith('http') ? (item.imageUrl || item.mediaUrl) : `${import.meta.env.VITE_API_URL}${item.imageUrl || item.mediaUrl}`} 
+                              className="w-16 h-16 object-cover rounded-lg shadow-sm" 
+                              alt="Thumbnail" 
+                              onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/150?text=No+Image'; }}
+                            />
                           ) : (
                             <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400"><ImageIcon size={24} /></div>
                           )}
@@ -275,7 +321,7 @@ export default function StudentLifeTab({ token, showSuccess }) {
                         </td>
                         <td className="p-4">
                           <span className="inline-block px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full">
-                            {item.grade || item.category}
+                            {item.grade || item.category || item.type || (activeSubTab === 'uniforms' ? 'Uniform' : 'General')}
                           </span>
                         </td>
                         <td className="p-4">

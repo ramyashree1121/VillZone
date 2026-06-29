@@ -36,7 +36,7 @@ export default function GalleryTab({ token, showSuccess }) {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/gallery/stats', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery/stats`, { headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) setStats(await res.json());
     } catch (err) { console.error(err); }
   };
@@ -99,7 +99,7 @@ export default function GalleryTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/gallery/${editId}` : '${import.meta.env.VITE_API_URL}/api/gallery';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/gallery/${editId}` : `${import.meta.env.VITE_API_URL}/api/gallery`;
       const method = isEditing ? 'PUT' : 'POST';
 
       const payload = new FormData();
@@ -146,7 +146,7 @@ export default function GalleryTab({ token, showSuccess }) {
     if (action === 'delete' && !window.confirm(`Permanently delete ${selectedIds.length} items?`)) return;
 
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/gallery/bulk', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery/bulk`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ ids: selectedIds, action, value })

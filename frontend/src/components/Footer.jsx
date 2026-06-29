@@ -7,7 +7,7 @@ export default function Footer() {
   const [socialLinks, setSocialLinks] = useState({ facebookUrl: '', instagramUrl: '', youtubeUrl: '' });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/settings')
+    fetch(`${import.meta.env.VITE_API_URL}/api/settings`)
       .then(res => res.json())
       .then(data => {
         if (data) {
@@ -21,7 +21,7 @@ export default function Footer() {
     <footer className="bg-primary-dark text-slate-300 pt-16 pb-8 border-t-4 border-secondary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          
+
           {/* Column 1: School Info */}
           <div>
             <div className="flex items-center gap-2 text-white mb-4">
@@ -37,26 +37,26 @@ export default function Footer() {
               Empowering students from day one to lead academic, personal, and societal growth through custom curriculums and local community integration.
             </p>
             <div className="flex gap-4">
-              <a 
-                href={socialLinks.facebookUrl || "https://www.facebook.com/villzoneschool"} 
-                target="_blank" 
-                rel="noreferrer" 
+              <a
+                href={socialLinks.facebookUrl || "https://www.facebook.com/villzoneschool"}
+                target="_blank"
+                rel="noreferrer"
                 className="p-2 rounded-full bg-slate-800 hover:bg-secondary hover:text-white transition-all text-slate-300 flex items-center justify-center"
               >
                 <FaFacebook size={18} />
               </a>
-              <a 
-                href={socialLinks.instagramUrl || "https://www.instagram.com/villzoneschool"} 
-                target="_blank" 
-                rel="noreferrer" 
+              <a
+                href={socialLinks.instagramUrl || "https://www.instagram.com/villzoneschool"}
+                target="_blank"
+                rel="noreferrer"
                 className="p-2 rounded-full bg-slate-800 hover:bg-secondary hover:text-white transition-all text-slate-300 flex items-center justify-center"
               >
                 <FaInstagram size={18} />
               </a>
-              <a 
-                href={socialLinks.youtubeUrl || "https://www.youtube.com/@villzoneschool"} 
-                target="_blank" 
-                rel="noreferrer" 
+              <a
+                href={socialLinks.youtubeUrl || "https://www.youtube.com/@villzoneschool"}
+                target="_blank"
+                rel="noreferrer"
                 className="p-2 rounded-full bg-slate-800 hover:bg-secondary hover:text-white transition-all text-slate-300 flex items-center justify-center"
               >
                 <FaYoutube size={18} />
@@ -114,10 +114,10 @@ export default function Footer() {
             <ul className="space-y-4 text-sm">
               <li className="flex gap-3 group">
                 <MapPin size={18} className="text-secondary shrink-0 mt-0.5 group-hover:text-accent transition-colors" />
-                <a 
-                  href="https://www.google.com/maps/search/?api=1&query=VillZone+School+Opposite+Indian+Bank+Near+Annanya+Mahal+Kilpennathur+Tiruvannamalai+Tamil+Nadu" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=VillZone+School+Opposite+Indian+Bank+Near+Annanya+Mahal+Kilpennathur+Tiruvannamalai+Tamil+Nadu"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-accent transition-colors"
                 >
                   VillZone School, Opposite Indian Bank, Near Annanya Mahal, Kilpennathur, Tiruvannamalai

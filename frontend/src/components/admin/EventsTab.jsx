@@ -17,7 +17,7 @@ export default function EventsTab({ token, showSuccess }) {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/events', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/events`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -33,7 +33,7 @@ export default function EventsTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/events/${editId}` : '${import.meta.env.VITE_API_URL}/api/events';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/events/${editId}` : `${import.meta.env.VITE_API_URL}/api/events`;
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, UserPlus, CalendarCheck, GraduationCap, Clock } from 'lucide-react';
+import { Users, UserPlus, CalendarCheck, GraduationCap, Clock, Edit2, Trash2, Phone, Mail } from 'lucide-react';
 
 const CampusVisitsTab = ({ token }) => {
   const [visits, setVisits] = useState([]);
@@ -8,6 +8,39 @@ const CampusVisitsTab = ({ token }) => {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedIds(filteredVisits.map(v => v._id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelect = (id) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const handleBulkUpdate = async (status) => {
+    if (!window.confirm(`Are you sure you want to mark ${selectedIds.length} visits as ${status}?`)) return;
+    try {
+      setLoading(true);
+      await Promise.all(selectedIds.map(id =>
+        fetch(`${import.meta.env.VITE_API_URL}/api/campus-visits/${id}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ status })
+        })
+      ));
+      fetchVisits();
+      setSelectedIds([]);
+    } catch (err) {
+      alert('Error updating some visits');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchVisits();
@@ -15,7 +48,7 @@ const CampusVisitsTab = ({ token }) => {
 
   const fetchVisits = async () => {
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/campus-visits', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/campus-visits`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -98,10 +131,10 @@ const CampusVisitsTab = ({ token }) => {
   if (loading) return <div className="p-6">Loading...</div>;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
 
-  const todayLeadsCount = visits.filter(v => new Date(v.createdAt).toDateString() === new Date().toDateString()).length;
-  const newLeadsCount = visits.filter(v => v.status === 'New Lead').length;
-  const confirmedCount = visits.filter(v => v.status === 'Confirmed Visit').length;
-  const convertedCount = visits.filter(v => v.status === 'Converted').length;
+  const newLeadsCount = visits.filter(v => v.status === 'Pending' || v.status === 'New Lead').length;
+  const confirmedCount = visits.filter(v => v.status === 'Scheduled' || v.status === 'Confirmed Visit').length;
+  const convertedCount = visits.filter(v => v.status === 'Completed' || v.status === 'Visited').length;
+  const cancelledCount = visits.filter(v => v.status === 'Cancelled').length;
 
   return (
     <div className="space-y-6">
@@ -112,19 +145,19 @@ const CampusVisitsTab = ({ token }) => {
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
           <div className="p-3 bg-amber-50 text-amber-600 rounded-lg"><UserPlus size={24} /></div>
-          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">New Leads</p><h3 className="text-2xl font-black text-slate-800">{newLeadsCount}</h3></div>
+          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Pending</p><h3 className="text-2xl font-black text-slate-800">{newLeadsCount}</h3></div>
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
-          <div className="p-3 bg-green-50 text-green-600 rounded-lg"><CalendarCheck size={24} /></div>
-          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Confirmed</p><h3 className="text-2xl font-black text-slate-800">{confirmedCount}</h3></div>
+          <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><CalendarCheck size={24} /></div>
+          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Scheduled</p><h3 className="text-2xl font-black text-slate-800">{confirmedCount}</h3></div>
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
-          <div className="p-3 bg-purple-50 text-purple-600 rounded-lg"><GraduationCap size={24} /></div>
-          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Converted</p><h3 className="text-2xl font-black text-slate-800">{convertedCount}</h3></div>
+          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><GraduationCap size={24} /></div>
+          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Completed</p><h3 className="text-2xl font-black text-slate-800">{convertedCount}</h3></div>
         </div>
         <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
-          <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><Clock size={24} /></div>
-          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Today's Leads</p><h3 className="text-2xl font-black text-slate-800">{todayLeadsCount}</h3></div>
+          <div className="p-3 bg-rose-50 text-rose-600 rounded-lg"><Clock size={24} /></div>
+          <div><p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Cancelled</p><h3 className="text-2xl font-black text-slate-800">{cancelledCount}</h3></div>
         </div>
       </div>
 
@@ -147,24 +180,31 @@ const CampusVisitsTab = ({ token }) => {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A3D62] outline-none"
+            className="p-2 px-4 border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-[#0A3D62] outline-none"
           >
             <option value="All">All Statuses</option>
-            <option value="New Lead">New Lead</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Follow Up">Follow Up</option>
-            <option value="Qualified">Qualified</option>
-            <option value="Confirmed Visit">Confirmed Visit</option>
-            <option value="Admission Applied">Admission Applied</option>
-            <option value="Converted">Converted</option>
-            <option value="Closed">Closed</option>
+            <option value="Pending">Pending</option>
+            <option value="Scheduled">Scheduled</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
           </select>
+          {selectedIds.length > 0 && (
+            <div className="flex items-center gap-2 bg-slate-200 px-3 py-1.5 rounded-xl text-sm font-bold shadow-inner flex-wrap">
+              <span className="text-slate-600 mr-2">{selectedIds.length} selected:</span>
+              <button onClick={() => handleBulkUpdate('Pending')} className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm text-xs">Pending</button>
+              <button onClick={() => handleBulkUpdate('Scheduled')} className="px-3 py-1 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg shadow-sm text-xs">Schedule</button>
+              <button onClick={() => handleBulkUpdate('Completed')} className="px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-sm text-xs">Complete</button>
+            </div>
+          )}
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="p-3 w-12">
+                  <input type="checkbox" onChange={handleSelectAll} checked={filteredVisits.length > 0 && selectedIds.length === filteredVisits.length} className="w-4 h-4 rounded border-gray-300 text-[#0A3D62] focus:ring-[#0A3D62] cursor-pointer"/>
+                </th>
                 <th className="p-3 font-semibold text-gray-700">Preferred Date</th>
                 <th className="p-3 font-semibold text-gray-700">Parent / Applicant Name</th>
                 <th className="p-3 font-semibold text-gray-700">Message</th>
@@ -175,18 +215,23 @@ const CampusVisitsTab = ({ token }) => {
             <tbody>
               {filteredVisits.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-4 text-center text-gray-500">No campus visit requests found.</td>
+                  <td colSpan="6" className="p-4 text-center text-gray-500">No campus visit requests found.</td>
                 </tr>
               ) : (
                 filteredVisits.map((v) => (
                   <tr key={v._id} className="border-b border-gray-100 hover:bg-gray-50 transition">
                     <td className="p-3">
+                      <input type="checkbox" checked={selectedIds.includes(v._id)} onChange={() => handleSelect(v._id)} className="w-4 h-4 rounded border-gray-300 text-[#0A3D62] focus:ring-[#0A3D62] cursor-pointer"/>
+                    </td>
+                    <td className="p-3">
                       <div className="font-semibold">{new Date(v.visitDate).toLocaleDateString()}</div>
                     </td>
                     <td className="p-3">
-                      <div className="font-semibold text-[#0A3D62]">{v.parentName}</div>
-                      <div className="text-sm text-gray-600">{v.mobileNumber}</div>
-                      {v.emailAddress && <div className="text-sm text-gray-500">{v.emailAddress}</div>}
+                      <div className="font-bold text-slate-800">{v.parentName}</div>
+                      <div className="text-xs text-slate-500 mt-1 flex flex-col gap-1">
+                        <a href={`tel:${v.mobileNumber}`} className="hover:text-blue-600 flex items-center gap-1"><Phone size={10} /> {v.mobileNumber}</a>
+                        {v.emailAddress && <a href={`mailto:${v.emailAddress}`} className="hover:text-blue-600 flex items-center gap-1"><Mail size={10} /> {v.emailAddress}</a>}
+                      </div>
                     </td>
                     <td className="p-3 text-sm text-gray-600">
                       {v.message || <span className="text-gray-400 italic">No message</span>}
@@ -196,43 +241,37 @@ const CampusVisitsTab = ({ token }) => {
                         <select
                           defaultValue={v.status}
                           onChange={(e) => handleStatusChange(v._id, e.target.value)}
-                          className="p-1 border rounded"
+                          className="p-2 border rounded-lg text-xs font-bold outline-none focus:border-primary"
                         >
-                          <option value="New Lead">New Lead</option>
-                          <option value="Contacted">Contacted</option>
-                          <option value="Follow Up">Follow Up</option>
-                          <option value="Qualified">Qualified</option>
-                          <option value="Confirmed Visit">Confirmed Visit</option>
-                          <option value="Admission Applied">Admission Applied</option>
-                          <option value="Converted">Converted</option>
-                          <option value="Closed">Closed</option>
+                          <option value="Pending">Pending</option>
+                          <option value="Scheduled">Scheduled</option>
+                          <option value="Completed">Completed</option>
+                          <option value="Cancelled">Cancelled</option>
                         </select>
                       ) : (
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${v.status === 'New Lead' ? 'bg-blue-100 text-blue-800' :
-                            v.status === 'Contacted' ? 'bg-yellow-100 text-yellow-800' :
-                              v.status === 'Follow Up' ? 'bg-orange-100 text-orange-800' :
-                                v.status === 'Qualified' ? 'bg-indigo-100 text-indigo-800' :
-                                  v.status === 'Confirmed Visit' ? 'bg-green-100 text-green-800' :
-                                    v.status === 'Admission Applied' ? 'bg-purple-100 text-purple-800' :
-                                      v.status === 'Converted' ? 'bg-emerald-100 text-emerald-800' :
-                                        'bg-gray-200 text-gray-800'
+                        <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                            v.status === 'Pending' || v.status === 'New Lead' ? 'bg-blue-100 text-blue-700' :
+                            v.status === 'Scheduled' || v.status === 'Confirmed Visit' ? 'bg-indigo-100 text-indigo-700' :
+                            v.status === 'Completed' || v.status === 'Visited' ? 'bg-emerald-100 text-emerald-700' :
+                            v.status === 'Cancelled' ? 'bg-rose-100 text-rose-700' :
+                            'bg-slate-100 text-slate-700'
                           }`}>
                           {v.status}
                         </span>
                       )}
                     </td>
-                    <td className="p-3 flex gap-2 items-center">
+                    <td className="p-3 flex gap-2 items-center flex-wrap">
                       <button
                         onClick={() => setEditingId(v._id)}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 flex items-center gap-1"
                       >
-                        Edit
+                        <Edit2 size={12} /> Edit Status
                       </button>
                       <button
                         onClick={() => handleDelete(v._id)}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium ml-2"
+                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 text-rose-500 hover:bg-rose-50 rounded-lg flex items-center gap-1"
                       >
-                        Delete
+                        <Trash2 size={12} /> Delete
                       </button>
                     </td>
                   </tr>

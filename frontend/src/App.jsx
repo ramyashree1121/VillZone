@@ -18,7 +18,6 @@ import AboutTrust from './pages/AboutTrust';
 import Management from './pages/Management';
 import VisionMission from './pages/VisionMission';
 import Academics from './pages/Academics';
-import Syllabus from './pages/Syllabus';
 import Faculty from './pages/Faculty';
 import Facilities from './pages/Facilities';
 import Infrastructure from './pages/Infrastructure';
@@ -76,7 +75,6 @@ export default function App() {
           <Route path="/management" element={<Management />} />
           <Route path="/vision-mission" element={<VisionMission />} />
           <Route path="/academics" element={<Academics />} />
-          <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/faculty" element={<Faculty />} />
           <Route path="/facilities" element={<Facilities />} />
           <Route path="/infrastructure" element={<Infrastructure />} />

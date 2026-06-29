@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import { useEffect } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Lightbox({ images, currentIndex, onClose, onPrev, onNext }) {
@@ -47,14 +47,14 @@ export default function Lightbox({ images, currentIndex, onClose, onPrev, onNext
             className="flex justify-center items-center max-w-full max-h-[75vh]"
           >
             {images[currentIndex].type === 'video' ? (
-              <video 
-                src={images[currentIndex].videoUrl?.startsWith('/') ? `http://localhost:5000${images[currentIndex].videoUrl}` : images[currentIndex].videoUrl} 
-                controls 
-                autoPlay 
+              <video
+                src={images[currentIndex].videoUrl?.startsWith('/') ? `${import.meta.env.VITE_API_URL}${images[currentIndex].videoUrl}` : images[currentIndex].videoUrl}
+                controls
+                autoPlay
                 className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl outline-none"
               />
             ) : images[currentIndex].type === 'youtube' ? (
-              <iframe 
+              <iframe
                 src={`https://www.youtube.com/embed/${images[currentIndex].videoUrl?.split('v=')[1]?.split('&')[0]}?autoplay=1`}
                 title={images[currentIndex].title || 'YouTube Video'}
                 frameBorder="0"
@@ -64,9 +64,10 @@ export default function Lightbox({ images, currentIndex, onClose, onPrev, onNext
               />
             ) : (
               <img
-                src={images[currentIndex].imageUrl || images[currentIndex]}
+                src={(images[currentIndex].imageUrl || images[currentIndex])?.startsWith('http') || (images[currentIndex].imageUrl || images[currentIndex])?.startsWith('data:') ? (images[currentIndex].imageUrl || images[currentIndex]) : `${import.meta.env.VITE_API_URL}${images[currentIndex].imageUrl || images[currentIndex]}`}
                 alt={images[currentIndex].title || 'Campus Asset'}
                 className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
+                onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Found'; }}
               />
             )}
           </motion.div>

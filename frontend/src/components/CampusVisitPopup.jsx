@@ -59,7 +59,7 @@ export default function CampusVisitPopup() {
 
     setVisitLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/campus-visits', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/campus-visits`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -93,7 +93,7 @@ export default function CampusVisitPopup() {
   return (
     <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 transition-all duration-500" onClick={() => setIsOpen(false)}>
       <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 w-full max-w-2xl relative overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn scale-100 transform transition-transform" onClick={(e) => e.stopPropagation()}>
-        
+
         <div className="bg-gradient-to-r from-primary to-primary-dark p-6 text-center relative shrink-0">
           <button
             type="button"
@@ -116,7 +116,7 @@ export default function CampusVisitPopup() {
                   {visitError}
                 </div>
               )}
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Parent / Applicant Name *</label>

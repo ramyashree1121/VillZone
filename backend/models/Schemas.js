@@ -1,5 +1,18 @@
 import mongoose from 'mongoose';
 
+// Leadership Schema
+const leadershipSchema = new mongoose.Schema({
+  role: { type: String, required: true },
+  name: { type: String, required: true },
+  qualification: { type: String },
+  image: { type: String },
+  message: { type: String },
+  email: { type: String },
+  displayOrder: { type: Number, default: 0 },
+  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
+  createdAt: { type: Date, default: Date.now }
+});
+
 // User Schema (Admin Roles)
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -61,7 +74,7 @@ const admissionSchema = new mongoose.Schema({
   previousMarksheet: { type: String },
   medicalRecords: { type: String },
 
-  status: { type: String, enum: ['New', 'Under Review', 'Contacted', 'Documents Pending', 'Approved', 'Confirmed', 'Rejected'], default: 'New' },
+  status: { type: String, enum: ['New', 'Verified', 'Under Review', 'Contacted', 'Documents Pending', 'Approved', 'Confirmed', 'Rejected'], default: 'New' },
   adminRemarks: { type: String },
   rejectionReason: { type: String },
   statusHistory: [{
@@ -256,7 +269,7 @@ const campusVisitSchema = new mongoose.Schema({
   visitDate: { type: Date, required: true },
   message: { type: String },
   leadSource: { type: String, default: 'Campus Visit Popup' },
-  status: { type: String, enum: ['New Lead', 'Contacted', 'Follow Up', 'Qualified', 'Confirmed Visit', 'Admission Applied', 'Converted', 'Closed'], default: 'New Lead' },
+  status: { type: String, enum: ['Pending', 'Scheduled', 'Completed', 'Cancelled', 'No Show', 'New Lead', 'Contacted', 'Follow Up', 'Qualified', 'Confirmed Visit', 'Admission Applied', 'Converted', 'Closed'], default: 'Pending' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
@@ -316,6 +329,65 @@ const studentLifeGallerySchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
+// Curriculum - Boards
+const curriculumBoardSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String },
+  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
+  displayOrder: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// Curriculum - Features
+const curriculumFeatureSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String },
+  icon: { type: String }, // optional, for frontend to map to lucide icons if needed
+  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
+  displayOrder: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// Curriculum - Category (Classes, Objectives, Subjects)
+const curriculumCategorySchema = new mongoose.Schema({
+  idName: { type: String, required: true, unique: true }, // e.g. 'Kindergarten'
+  tabLabel: { type: String, required: true }, // e.g. 'Kindergarten'
+  tags: { type: String }, // e.g. 'PRE-KG, LKG, UKG'
+  title: { type: String, required: true }, // e.g. 'Academic Objectives & Focus'
+  description: { type: String }, // e.g. 'Foundational literacy...'
+  subjects: [{ type: String }], // e.g. ['Phonics & English Reading', 'Basic Mathematics...']
+  displayOrder: { type: Number, default: 0 },
+  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// Uniform Guidelines Schema
+const uniformGuidelineSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String },
+  imageUrl: { type: String },
+  displayOrder: { type: Number, default: 0 },
+  status: { type: String, enum: ['Published', 'Draft'], default: 'Published' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// Awards & Honours Schema
+const awardHonorSchema = new mongoose.Schema({
+  type: { type: String, required: true }, // e.g. 'Academic', 'Sports', 'Institutional'
+  title: { type: String, required: true },
+  description: { type: String },
+  icon: { type: String }, // name of the lucide icon, e.g., 'Trophy', 'Award'
+  imageUrl: { type: String },
+  displayOrder: { type: Number, default: 0 },
+  status: { type: String, enum: ['Published', 'Draft'], default: 'Published' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
 export const User = mongoose.model('User', userSchema);
 export const Admission = mongoose.model('Admission', admissionSchema);
 export const Lead = mongoose.model('Lead', leadSchema);
@@ -334,3 +406,9 @@ export const Syllabus = mongoose.model('Syllabus', syllabusSchema);
 export const StudentLifeTopper = mongoose.model('StudentLifeTopper', studentLifeTopperSchema);
 export const StudentLifeAchievement = mongoose.model('StudentLifeAchievement', studentLifeAchievementSchema);
 export const StudentLifeGallery = mongoose.model('StudentLifeGallery', studentLifeGallerySchema);
+export const CurriculumBoard = mongoose.model('CurriculumBoard', curriculumBoardSchema);
+export const CurriculumFeature = mongoose.model('CurriculumFeature', curriculumFeatureSchema);
+export const CurriculumCategory = mongoose.model('CurriculumCategory', curriculumCategorySchema);
+export const UniformGuideline = mongoose.model('UniformGuideline', uniformGuidelineSchema);
+export const AwardHonor = mongoose.model('AwardHonor', awardHonorSchema);
+export const Leadership = mongoose.model('Leadership', leadershipSchema);

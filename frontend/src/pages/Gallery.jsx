@@ -64,7 +64,7 @@ export default function Gallery() {
   ];
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_API_URL}/api/gallery?status=Active')
+    fetch(`${import.meta.env.VITE_API_URL}/api/gallery?status=Active`)
       .then((res) => res.json())
       .then((data) => {
         if (data && data.length > 0) {

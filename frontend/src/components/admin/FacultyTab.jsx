@@ -19,7 +19,7 @@ export default function FacultyTab({ token, showSuccess }) {
 
   const fetchFaculty = async () => {
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/faculty', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -35,7 +35,7 @@ export default function FacultyTab({ token, showSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/faculty/${editId}` : '${import.meta.env.VITE_API_URL}/api/faculty';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/faculty/${editId}` : `${import.meta.env.VITE_API_URL}/api/faculty`;
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -105,14 +105,14 @@ export default function FacultyTab({ token, showSuccess }) {
     formDataUpload.append('image', file);
 
     try {
-      const res = await fetch('${import.meta.env.VITE_API_URL}/api/upload', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formDataUpload
       });
       if (res.ok) {
         const data = await res.json();
-        setFormData({ ...formData, image: '${import.meta.env.VITE_API_URL}' + data.imageUrl });
+        setFormData({ ...formData, image: `${import.meta.env.VITE_API_URL}` + data.imageUrl });
         showSuccess('Image uploaded successfully!');
       } else {
         alert('Image upload failed');
@@ -180,7 +180,7 @@ export default function FacultyTab({ token, showSuccess }) {
               </div>
               {formData.image && (
                 <div className="mt-3">
-                  <img src={formData.image} alt="Preview" className="h-20 w-20 object-cover rounded-xl border border-slate-200" />
+                  <img src={formData.image?.startsWith('http') || formData.image?.startsWith('data:') ? formData.image : `${import.meta.env.VITE_API_URL}${formData.image}`} alt="Preview" className="h-20 w-20 object-cover rounded-xl border border-slate-200" onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/150?text=Preview'; }} />
                 </div>
               )}
             </div>
@@ -211,7 +211,7 @@ export default function FacultyTab({ token, showSuccess }) {
             <div key={fac._id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col group">
               <div className="h-48 relative overflow-hidden bg-slate-100">
                 {fac.image ? (
-                  <img src={fac.image} alt={fac.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={fac.image?.startsWith('http') || fac.image?.startsWith('data:') ? fac.image : `${import.meta.env.VITE_API_URL}${fac.image}`} alt={fac.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x400?text=Faculty'; }} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-300"><User size={48} /></div>
                 )}

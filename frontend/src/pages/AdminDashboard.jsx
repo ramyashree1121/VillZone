@@ -7,11 +7,11 @@ import AdmissionsTab from '../components/admin/AdmissionsTab';
 import EnquiriesTab from '../components/admin/EnquiriesTab';
 import CampusVisitsTab from '../components/admin/CampusVisitsTab';
 import AILeadsTab from '../components/admin/AILeadsTab';
-import NoticesTab from '../components/admin/NoticesTab';
-import EventsTab from '../components/admin/EventsTab';
+import NewsAndEventsTab from '../components/admin/NewsAndEventsTab';
 import GalleryTab from '../components/admin/GalleryTab';
 import FacultyTab from '../components/admin/FacultyTab';
-import SyllabusTab from '../components/admin/SyllabusTab';
+import LeadershipTab from '../components/admin/LeadershipTab';
+import CurriculumTab from '../components/admin/CurriculumTab';
 import StudentLifeTab from '../components/admin/StudentLifeTab';
 
 export default function AdminDashboard() {
@@ -54,9 +54,9 @@ export default function AdminDashboard() {
   const loadDashboardData = async () => {
     try {
       const [statsRes, logsRes, leadsRes] = await Promise.all([
-        fetch('${import.meta.env.VITE_API_URL}/api/admin/stats', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('${import.meta.env.VITE_API_URL}/api/logs', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('${import.meta.env.VITE_API_URL}/api/leads', { headers: { Authorization: `Bearer ${token}` } })
+        fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/api/logs`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/api/leads`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       if (statsRes.ok) setStats(await statsRes.json());
       if (logsRes.ok) setLogs(await logsRes.json());
@@ -77,11 +77,11 @@ export default function AdminDashboard() {
       case 'inquiries': return <EnquiriesTab token={token} showSuccess={showSuccess} />;
       case 'campus-visits': return <CampusVisitsTab token={token} />;
       case 'ai-leads': return <AILeadsTab token={token} showSuccess={showSuccess} />;
-      case 'notices': return <NoticesTab token={token} showSuccess={showSuccess} />;
-      case 'events': return <EventsTab token={token} showSuccess={showSuccess} />;
+      case 'news-events': return <NewsAndEventsTab token={token} showSuccess={showSuccess} />;
       case 'gallery': return <GalleryTab token={token} showSuccess={showSuccess} />;
       case 'faculty': return <FacultyTab token={token} showSuccess={showSuccess} />;
-      case 'syllabus': return <SyllabusTab token={token} showSuccess={showSuccess} />;
+      case 'leadership': return <LeadershipTab token={token} showSuccess={showSuccess} />;
+      case 'curriculum': return <CurriculumTab token={token} showSuccess={showSuccess} />;
       case 'student-life': return <StudentLifeTab token={token} showSuccess={showSuccess} />;
       // Fallback for not-yet-implemented tabs
       default: return (
